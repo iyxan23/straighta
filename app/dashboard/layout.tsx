@@ -1,8 +1,7 @@
-import BookIcon from "mdi-react/BookIcon";
-import ViewWeekIcon from "mdi-react/ViewWeekIcon";
-import Link from "next/link";
 import React from "react";
 import Navigation from "./Navigation";
+import Link from "next/link";
+import BottomButtonsBar from "./BottomButtonsBar";
 
 export default function DashboardLayout({
   children,
@@ -10,8 +9,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col">
-      <header className="fixed bottom-0 z-10 w-full bg-white shadow-lg border-slate-200 border-t-2 flex flex-row justify-between py-3 px-4">
+    <div className="overflow-hidden h-screen w-screen">
+      {children}
+      <header className="sticky bottom-0 z-10 w-full h-fit bg-white shadow-lg border-slate-200 border-t-2 flex flex-row justify-between py-3 px-4">
         <div className="flex flex-row gap-4 w-full">
           <div className="bg-black rounded-full h-full aspect-square"></div>
           <div className="">
@@ -20,13 +20,10 @@ export default function DashboardLayout({
           </div>
         </div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <button className="rounded-lg text-lg shadow-md bg-sky-500 active:bg-sky-600 active:scale-[97%] px-8 py-2 align-middle text-center text-white font-bold hover:bg-sky-400 focus:outline-none focus:ring focus:ring-sky-200 hover:shadow-lg transition-all">
-            Study
-          </button>
+          <BottomButtonsBar />
         </div>
         <Navigation />
       </header>
-      {children}
     </div>
   );
 }
