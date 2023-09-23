@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
+}
+
+// CONVENTION:
+//   use snake_case for fields and tables (model names should be PascalCase), it works better with
+//   postgresql
+
+model User {
+  username String @id
+  password String // bcrypt-hashed ofc
+
+  subjects  Subject[]
+  materials Material[]
+
+  sessions StudySession[]
+
+  @@map("user")
+}
+
+model Subject {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  owner          User   @relation(fields: [owner_username], references: [username])
+  owner_username String
+
+  @@map("subject")
+}
+
+model Material {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  owner          User   @relation(fields: [owner_username], references: [username])
+  owner_username String
+
+  items StudySessionConclusionItem[]
+
+  @@map("material")
+}
+
+model StudySession {
+  id    Int      @id @default(autoincrement())
+  start DateTime @default(now())
+
+  user     User   @relation(fields: [username], references: [username])
+  username String
+
+  conclusion StudySessionConclusion? // if null, then the study session is still on going
+
+  @@map("study_session")
+}
+
+model StudySessionConclusion {
+  id     Int          @id @default(autoincrement())
+  parent StudySession @relation(fields: [study_session_id], references: [id])
+
+  study_session_id Int      @unique
+  end              DateTime @default(now())
+
+  items StudySessionConclusionItem[]
+
+  @@map("study_session_conclusion")
+}
+
+model StudySessionConclusionItem {
+  id Int @id @default(autoincrement())
+
+  parent    StudySessionConclusion @relation(fields: [parent_id], references: [id])
+  parent_id Int
+
+  material    Material @relation(fields: [material_id], references: [id])
+  material_id Int
+
+  subjective_score Int
+  objective_scores Int[]
+
+  @@map("study_session_conclusion_item")
+}
