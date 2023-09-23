@@ -7,7 +7,7 @@ import { getJWTSecretKey } from "@/lib/auth";
 
 const REDIRECT_TO = "/auth/register/questions";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const payloadParseResult = await request
     .json()
     .then((json) => authRegisterRequest.safeParseAsync(json));
@@ -49,4 +49,6 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
     secure: true,
   });
+
+  return response;
 }

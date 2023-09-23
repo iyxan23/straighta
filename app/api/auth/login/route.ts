@@ -7,7 +7,7 @@ import { getJWTSecretKey } from "@/lib/auth";
 
 const REDIRECT_TO = "/dashboard";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const payloadParseResult = await request
     .json()
     .then((json) => authLoginRequest.safeParseAsync(json));
@@ -66,4 +66,6 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
     secure: true,
   });
+
+  return response;
 }
