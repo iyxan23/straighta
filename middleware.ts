@@ -18,6 +18,12 @@ const kickWhenLoggedInEndpoints = [
   "/auth/register",
 ];
 
+function injectTokenPayload(req: NextRequest, username: string): NextResponse {
+  const headers = new Headers(req.headers);
+  headers.append("X-Middleware-Username", username);
+  return NextResponse.next({ request: { headers } });
+}
+
 export default async function middleware(
   req: NextRequest
 ): Promise<NextResponse> {
@@ -35,9 +41,10 @@ export default async function middleware(
     }
 
     const token = req.cookies.get("token")!;
+    let jwt;
 
     try {
-      await jwtVerify(token.value, getJWTSecretKey());
+      jwt = await jwtVerify(token.value, getJWTSecretKey());
     } catch {
       // invalid token! invalidate it
       const response = NextResponse.redirect(
@@ -48,13 +55,14 @@ export default async function middleware(
     }
 
     // valid request yay!
-    return NextResponse.next();
+    return injectTokenPayload(req, jwt.payload["username"] as string);
   } else {
     const token = req.cookies.get("token");
+    let jwt;
 
     if (token) {
       try {
-        await jwtVerify(token.value, getJWTSecretKey());
+        jwt = await jwtVerify(token.value, getJWTSecretKey());
       } catch {
         // invalid token! invalidate it
         const response = NextResponse.next();
@@ -75,6 +83,10 @@ export default async function middleware(
       }
     }
 
-    return NextResponse.next();
+    if (jwt) {
+      return injectTokenPayload(req, jwt.payload["username"] as string);
+    } else {
+      return NextResponse.next();
+    }
   }
 }
