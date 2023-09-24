@@ -2,12 +2,12 @@
  * @jest-environment node
  */
 
-import { NextRequest } from "next/server";
 import { INVALID_CREDENTIALS } from "./../errors";
 import { LOGIN_REDIRECT_TO, POST as loginPOST } from "./login/route";
 import { POST as registerPOST, REGISTER_REDIRECT_TO } from "./register/route";
 import { describe, test, expect, beforeAll, afterAll } from "@jest/globals";
 import prisma from "@/prisma";
+import { createMockRequest } from "@/lib/test-utils";
 
 // iyxan23 - 24 sept:
 //     should be better to provide a shim for the database we don't want to be
@@ -15,18 +15,6 @@ import prisma from "@/prisma";
 //
 //     Might be better to use a sqlite backend for testing instead. But switching
 //     databases is a different story for prisma. my god, why does prisma suck
-
-// this looks really stupid, but it is how it is. There is barely any library to be able to test
-// edge-function-style route handles.
-function createMockRequest(
-  method: "GET" | "POST" | "PUT" | "DELETE",
-  json: any
-): NextRequest {
-  return {
-    method,
-    json: () => new Promise((resolve) => resolve(json)),
-  } as unknown as NextRequest;
-}
 
 const USERNAME = "nurihsan";
 const PASSWORD = "1234567890";

@@ -1,6 +1,7 @@
 import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 import { getJWTSecretKey } from "./lib/auth";
+import { HEADER_TOKEN_USERNAME } from "./middlewareHeaders";
 
 const publicEndpoints = [
   "/api/auth/login",
@@ -20,7 +21,7 @@ const kickWhenLoggedInEndpoints = [
 
 function injectTokenPayload(req: NextRequest, username: string): NextResponse {
   const headers = new Headers(req.headers);
-  headers.append("X-Middleware-Username", username);
+  headers.append(HEADER_TOKEN_USERNAME, username);
   return NextResponse.next({ request: { headers } });
 }
 

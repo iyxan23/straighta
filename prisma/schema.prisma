@@ -33,12 +33,17 @@ model Subject {
   owner          User   @relation(fields: [owner_username], references: [username])
   owner_username String
 
+  materials Material[]
+
   @@map("subject")
 }
 
 model Material {
   id    Int    @id @default(autoincrement())
   title String
+
+  parent_subject Subject @relation(fields: [subject_id], references: [id])
+  subject_id     Int
 
   owner          User   @relation(fields: [owner_username], references: [username])
   owner_username String

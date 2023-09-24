@@ -69,7 +69,42 @@ type Response = { status: "ok"; payload: { message: "Telah keluar" } };
 
 Yes that's a concrete literal type, what do you expect lol.
 
-### `[🛡️]` `/api/subjects`
+### `[🛡️]` `/api/subject`
+
+#### GET
+
+Retrieve a specific subject with an id
+
+```typescript
+type Request = {
+  id: number;
+};
+
+type Response = {
+  title: string;
+  overallScore: number;
+  materials: number[]; // material ids
+};
+```
+
+#### POST
+
+Create a subject
+
+```typescript
+type Request = {
+  title: string;
+  subjectiveScore: number;
+  objectiveScore?: number;
+  materials?: string[];
+};
+
+type Response = {
+  id: number;
+};
+```
+
+### `[🛡️]` `/api/subject/list`
 
 #### `GET`
 

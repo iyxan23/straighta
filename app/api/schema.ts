@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
-export const responsResultSchema = <T>(payloadSchema: z.ZodSchema<T>) =>
+export const responseResultSchema = <T>(payloadSchema: z.ZodSchema<T>) =>
   z.discriminatedUnion("status", [
     z.object({ status: z.literal("ok"), payload: payloadSchema }),
     z.object({ status: z.literal("err"), reason: z.string() }),
@@ -11,7 +11,7 @@ export const authLoginRequest = z.object({
   username: z.string(),
   password: z.string(),
 });
-export const authLoginResponse = responsResultSchema(
+export const authLoginResponse = responseResultSchema(
   z.object({ redirect: z.string() })
 );
 
@@ -23,22 +23,52 @@ export const authRegisterRequest = z.object({
   username: z.string(),
   password: z.string().min(8, "password minimal 8 karakter"),
 });
-export const authRegisterResponse = responsResultSchema(
+export const authRegisterResponse = responseResultSchema(
   z.object({ redirect: z.string() })
 );
 
 export type AuthRegisterRequest = z.infer<typeof authRegisterRequest>;
 export type AuthRegisterResponse = z.infer<typeof authRegisterResponse>;
 
-// /api/subjects
-export const subjectsRequest = z.object({
+// /api/subject
+//  -> GET: retrieve a specific subject and its materials
+export const subjectGetRequest = z.object({
+  id: z.number(),
+});
+export const subjectGetResponse = responseResultSchema(
+  z.object({
+    title: z.string(),
+    overallScore: z.number(),
+    materials: z.array(z.number()),
+  })
+);
+
+//  -> POST: create a new subject
+export const subjectPostRequest = z.object({
+  title: z.string(),
+  materials: z.optional(z.array(z.string())),
+});
+export const subjectPostResponse = responseResultSchema(
+  z.object({
+    id: z.number(),
+  })
+);
+
+export type SubjectGetRequest = z.infer<typeof subjectGetRequest>;
+export type SubjectGetResponse = z.infer<typeof subjectGetResponse>;
+
+export type SubjectPostRequest = z.infer<typeof subjectPostRequest>;
+export type SubjectPostResponse = z.infer<typeof subjectPostResponse>;
+
+// /api/subject/list
+export const subjectListGetRequest = z.object({
   limit: z
     .number()
     .min(1, "limit setidaknya berisi 1")
     .max(100, "limit memiliki maksimum 100"),
   offset: z.number().min(1, "offset tidak boleh kurang dari 1"),
 });
-export const subjectsResponse = responsResultSchema(
+export const subjectListGetResponse = responseResultSchema(
   z.array(
     z.object({
       id: z.number(),
@@ -48,8 +78,8 @@ export const subjectsResponse = responsResultSchema(
   )
 );
 
-export type SubjectsRequest = z.infer<typeof subjectsRequest>;
-export type SubjectsResponse = z.infer<typeof subjectsResponse>;
+export type SubjectListGetRequest = z.infer<typeof subjectListGetRequest>;
+export type SubjectListGetResponse = z.infer<typeof subjectListGetRequest>;
 
 // /api/materials
 export const materialsRequest = z.object({
@@ -60,7 +90,7 @@ export const materialsRequest = z.object({
     .max(100, "limit memiliki maksimum 100"),
   offset: z.number().min(1, "offset tidak boleh kurang dari 1"),
 });
-export const materialResponse = responsResultSchema(
+export const materialResponse = responseResultSchema(
   z.array(
     z.object({ id: z.number(), title: z.string(), oveallScore: z.number() })
   )
@@ -76,7 +106,7 @@ export const studyNewRequest = z.object({
     materalIds: z.array(z.number()),
   }),
 });
-export const studyNewResponse = responsResultSchema(
+export const studyNewResponse = responseResultSchema(
   z.object({ id: z.number() })
 );
 
@@ -100,7 +130,7 @@ export const studyEndRequest = z.object({
     })
   ),
 });
-export const studyEndResponse = responsResultSchema(
+export const studyEndResponse = responseResultSchema(
   z.object({ id: z.number() })
 );
 
