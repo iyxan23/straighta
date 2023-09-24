@@ -10,7 +10,7 @@ export const LOGIN_REDIRECT_TO = "/dashboard";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const payloadParseResult = await authLoginRequest.safeParseAsync(
-    request.body
+    await request.json()
   );
 
   if (!payloadParseResult.success) {

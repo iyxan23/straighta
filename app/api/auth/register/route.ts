@@ -9,7 +9,7 @@ export const REGISTER_REDIRECT_TO = "/auth/register/questions";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const payloadParseResult = await authRegisterRequest.safeParseAsync(
-    request.body
+    await request.json()
   );
 
   if (!payloadParseResult.success) {
