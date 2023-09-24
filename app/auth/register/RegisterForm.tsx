@@ -1,6 +1,6 @@
 "use client";
 
-import { authLoginResponse } from "@/app/api/schema";
+import { authRegisterResponse } from "@/app/api/schema";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -35,18 +35,20 @@ export default function LoginForm() {
         }}
         className="px-8 py-6 bg-white rounded-lg shadow-md flex flex-col gap-6"
       >
-        <h1 className="text-2xl text-slate-700 font-bold">Login</h1>
+        <h1 className="text-2xl text-slate-700 font-bold">Register</h1>
         <form
           onSubmit={(ev) => {
             ev.preventDefault();
+
             setSubmitting(true);
             setError(null);
-            fetch("/api/auth/login", {
+
+            fetch("/api/auth/register", {
               method: "POST",
               body: JSON.stringify({ username, password }),
             })
               .then((response) => response.json())
-              .then((response) => authLoginResponse.safeParseAsync(response))
+              .then((response) => authRegisterResponse.safeParseAsync(response))
               .then((response) => {
                 setSubmitting(false);
                 if (!response.success) {
@@ -85,8 +87,8 @@ export default function LoginForm() {
 
           <input
             className={`
-            py-2 px-4 bg-white border border-slate-200 rounded-md hover:bg-slate-50
-            hover:border-slate-300 focus:outline-none focus:ring focus:ring-sky-200 transition-all
+          py-2 px-4 bg-white border border-slate-200 rounded-md hover:bg-slate-50
+          hover:border-slate-300 focus:outline-none focus:ring focus:ring-sky-200 transition-all
           ${submitting && "opacity-75"}`}
             type="password"
             name="password"
@@ -99,21 +101,17 @@ export default function LoginForm() {
 
           <input
             className={`
-            cursor-pointer rounded-lg mt-4 shadow-md bg-sky-500 active:bg-sky-600
-            active:scale-[97%] px-8 py-3 align-middle text-center text-white font-bold
+          cursor-pointer rounded-lg mt-4 shadow-md bg-sky-500 active:bg-sky-600
+          active:scale-[97%] px-8 py-3 align-middle text-center text-white font-bold
           hover:bg-sky-400 focus:outline-none focus:ring focus:ring-sky-200 hover:shadow-lg
           transition-all
           ${submitting && "opacity-75 scale-95 animate-pulse cursor-wait"}`}
             type="submit"
             disabled={submitting}
-            value="Login"
+            value="Register"
           />
-
-          <Link
-            className="text-sm text-sky-500 text-center"
-            href="/auth/register"
-          >
-            Belum punya akun?
+          <Link className="text-sm text-sky-500 text-center" href="/auth/login">
+            Sudah punya akun?
           </Link>
         </form>
       </motion.section>

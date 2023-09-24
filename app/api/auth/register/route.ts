@@ -4,6 +4,7 @@ import prisma from "@/prisma";
 import bcryptjs from "bcryptjs";
 import { SignJWT } from "jose";
 import { getJWTSecretKey } from "@/lib/auth";
+import { UNABLE_TO_CREATE_USER } from "../../errors";
 
 export const REGISTER_REDIRECT_TO = "/auth/register/questions";
 
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       await authRegisterResponse.parseAsync({
         status: "err",
-        reason: payloadParseResult.error.toString(),
+        reason: payloadParseResult.error.message,
       }),
       { status: 400 }
     );
@@ -25,9 +26,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const { username, password } = payloadParseResult.data;
 
   // buat akuun
-  const _user = await prisma.user.create({
-    data: { username, password: await bcryptjs.hash(password, 12) },
-  });
+  try {
+    const _user = await prisma.user.create({
+      data: { username, password: await bcryptjs.hash(password, 12) },
+    });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      await authRegisterResponse.parseAsync({
+        status: "err",
+        reason: UNABLE_TO_CREATE_USER,
+      }),
+      { status: 400 }
+    );
+  }
 
   const response = NextResponse.json(
     await authRegisterResponse.parseAsync({
@@ -42,7 +54,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const token = await new SignJWT({ username })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("30s") // Set your own expiration time
+    .setExpirationTime("4w") // Set your own expiration time
     .sign(getJWTSecretKey());
 
   response.cookies.set({

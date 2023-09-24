@@ -17,7 +17,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       await authLoginResponse.parseAsync({
         status: "err",
-        reason: payloadParseResult.error.toString(),
+        reason: payloadParseResult.error.message,
       }),
       { status: 400 }
     );
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const token = await new SignJWT({ username })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("30s") // Set your own expiration time
+    .setExpirationTime("4w") // Set your own expiration time
     .sign(getJWTSecretKey());
 
   response.cookies.set({
