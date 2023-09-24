@@ -12,7 +12,7 @@ export const authLoginRequest = z.object({
   password: z.string(),
 });
 export const authLoginResponse = responsResultSchema(
-  z.object({ redirect: z.string().url() })
+  z.object({ redirect: z.string() })
 );
 
 export type AuthLoginRequest = z.infer<typeof authLoginRequest>;
@@ -24,7 +24,7 @@ export const authRegisterRequest = z.object({
   password: z.string().min(8, "password minimal 8 karakter"),
 });
 export const authRegisterResponse = responsResultSchema(
-  z.object({ redirect: z.string().url() })
+  z.object({ redirect: z.string() })
 );
 
 export type AuthRegisterRequest = z.infer<typeof authRegisterRequest>;

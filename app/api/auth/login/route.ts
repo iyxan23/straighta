@@ -1,3 +1,4 @@
+import { INVALID_CREDENTIALS } from "./../../errors";
 import { authLoginRequest, authLoginResponse } from "./../../schema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
@@ -5,19 +6,20 @@ import bcryptjs from "bcryptjs";
 import { SignJWT } from "jose";
 import { getJWTSecretKey } from "@/lib/auth";
 
-const REDIRECT_TO = "/dashboard";
+export const LOGIN_REDIRECT_TO = "/dashboard";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const payloadParseResult = await request
-    .json()
-    .then((json) => authLoginRequest.safeParseAsync(json));
+  const payloadParseResult = await authLoginRequest.safeParseAsync(
+    request.body
+  );
 
   if (!payloadParseResult.success) {
     return NextResponse.json(
       await authLoginResponse.parseAsync({
         status: "err",
         reason: payloadParseResult.error.toString(),
-      })
+      }),
+      { status: 400 }
     );
   }
 
@@ -28,8 +30,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       await authLoginResponse.parseAsync({
         status: "err",
-        reason: "Kredensial tidak valid",
-      })
+        reason: INVALID_CREDENTIALS,
+      }),
+      { status: 403 }
     );
   }
 
@@ -39,8 +42,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(
       await authLoginResponse.parseAsync({
         status: "err",
-        reason: "Kredensial tidak valid",
-      })
+        reason: INVALID_CREDENTIALS,
+      }),
+      { status: 403 }
     );
   }
 
@@ -48,7 +52,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const response = NextResponse.json(
     await authLoginResponse.parseAsync({
       status: "ok",
-      redirect: REDIRECT_TO,
+      payload: {
+        redirect: LOGIN_REDIRECT_TO,
+      },
     })
   );
 

@@ -1,0 +1,1 @@
+export const INVALID_CREDENTIALS = "Kredensial tidak valid";

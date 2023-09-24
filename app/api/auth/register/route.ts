@@ -5,19 +5,20 @@ import bcryptjs from "bcryptjs";
 import { SignJWT } from "jose";
 import { getJWTSecretKey } from "@/lib/auth";
 
-const REDIRECT_TO = "/auth/register/questions";
+export const REGISTER_REDIRECT_TO = "/auth/register/questions";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const payloadParseResult = await request
-    .json()
-    .then((json) => authRegisterRequest.safeParseAsync(json));
+  const payloadParseResult = await authRegisterRequest.safeParseAsync(
+    request.body
+  );
 
   if (!payloadParseResult.success) {
     return NextResponse.json(
       await authRegisterResponse.parseAsync({
         status: "err",
         reason: payloadParseResult.error.toString(),
-      })
+      }),
+      { status: 400 }
     );
   }
 
@@ -31,7 +32,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const response = NextResponse.json(
     await authRegisterResponse.parseAsync({
       status: "ok",
-      redirect: REDIRECT_TO,
+      payload: {
+        redirect: REGISTER_REDIRECT_TO,
+      },
     })
   );
 
