@@ -2,6 +2,9 @@
 
 This is a collection of StraightA APIs. Nulis ini biar gak lupa wkkww
 
+> Note: For headers that is prefixed with `[🛡️]` means they're
+> protected (only logged-in users can access)
+
 Every of these types are declared as a zod schema on the file `/app/api/schema.ts`.
 
 ### Generic Response error-handling type
@@ -14,7 +17,7 @@ type ResponseResult<T> =
 
 The type above may be used on the following api response types to provide a unified .
 
-> Small note: ResponseResult doesn't actually exist in the zod schema, it's defined as a function that takes a payload schema and wrap status around it.
+> Small note: ResponseResult doesn't actually exist as a zod schema, it's defined as a function that takes a payload schema and wrap status around it.
 
 ### `/api/auth/login`
 
@@ -54,7 +57,19 @@ the user go through the questions flow before doing anything with the dashboard.
 Although, the user will get redirected automatically by the middleware if they haven't
 answered the questions yet.
 
-### `/api/subjects`
+### `[🛡️]` `/api/auth/logout`
+
+#### `POST`
+
+```typescript
+type Request = {};
+
+type Response = { status: "ok"; payload: { message: "Telah keluar" } };
+```
+
+Yes that's a concrete literal type, what do you expect lol.
+
+### `[🛡️]` `/api/subjects`
 
 #### `GET`
 
@@ -73,7 +88,7 @@ type Response = ResponseResult<
 >;
 ```
 
-### `/api/materials`
+### `[🛡️]` `/api/materials`
 
 #### `GET`
 
@@ -93,7 +108,7 @@ type Response = ResponseResult<
 >;
 ```
 
-### `/api/study/new`
+### `[🛡️]` `/api/study/new`
 
 Creates a new studying session
 
@@ -112,7 +127,7 @@ type Response = ResponseResult<{
 }>;
 ```
 
-### `/api/study/end`
+### `[🛡️]` `/api/study/end`
 
 Stops a studying session, with parameters about how the study went.
 
