@@ -5,9 +5,14 @@
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { describe, test, expect, beforeAll, afterAll } from "@jest/globals";
 import { POST as subjectPost, GET as subjectGET } from "./route";
+import { GET as subejctListGET } from "./list/route";
 import prisma from "@/prisma";
 import { createMockRequest, zip } from "@/lib/test-utils";
-import { subjectGetResponse, subjectPostResponse } from "../schema";
+import {
+  subjectGetResponse,
+  subjectListGetResponse,
+  subjectPostResponse,
+} from "../schema";
 
 describe("create and list subjects", () => {
   type SubjectRecord = {
@@ -131,4 +136,45 @@ describe("create and list subjects", () => {
       expect(data.data.payload).toBe(subject);
     });
   }
+
+  test("listing subjects", async () => {
+    const request = createMockRequest(
+      "GET",
+      { limit: 50, offset: 0 },
+      {
+        [HEADER_TOKEN_USERNAME]: username,
+      }
+    );
+    const response = await subejctListGET(request);
+
+    const data = await response
+      .json()
+      .then((json) => subjectListGetResponse.safeParseAsync(json));
+
+    expect(data.success).toBe(true);
+
+    // to not make typescript complain lol
+    if (!data.success) {
+      throw new Error("expect failed");
+    }
+
+    expect(data.data.status).toBe("ok");
+
+    if (data.data.status != "ok") {
+      throw new Error("expect failed");
+    }
+
+    expect(
+      data.data.payload.map(({ title, id }) => {
+        return { title, id };
+      })
+    ).toStrictEqual(
+      zip<number, SubjectRecord, number[], SubjectRecord[]>(
+        subjectIds,
+        SUBJECT_DATASET
+      ).map(([id, { title }]) => {
+        return { title, id };
+      })
+    );
+  });
 });

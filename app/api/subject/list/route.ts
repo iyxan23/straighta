@@ -1,9 +1,15 @@
-import { subjectListGetRequest, subjectListGetResponse } from "./../../schema";
+import {
+  subjectListGetRequest,
+  type SubjectListGetResponse,
+  subjectListGetResponse,
+} from "./../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(
+  req: NextRequest
+): Promise<NextResponse<SubjectListGetResponse>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await subjectListGetRequest.safeParseAsync(await req.json());
 
@@ -18,14 +24,22 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   const { limit, offset } = payload.data;
+  const subjects = await prisma.subject.findMany({
+    skip: offset,
+    take: limit,
+    where: {
+      owner_username: username,
+    },
+  });
 
-  return NextResponse.json(
-    prisma.subject.findMany({
-      skip: offset,
-      take: limit,
-      where: {
-        owner_username: username,
-      },
-    })
-  );
+  return NextResponse.json({
+    status: "ok",
+    payload: subjects.map((s) => {
+      return {
+        id: s.id,
+        title: s.title,
+        overallScore: 1, // todo
+      };
+    }),
+  });
 }

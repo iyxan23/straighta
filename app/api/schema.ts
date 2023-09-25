@@ -66,7 +66,7 @@ export const subjectListGetRequest = z.object({
     .number()
     .min(1, "limit setidaknya berisi 1")
     .max(100, "limit memiliki maksimum 100"),
-  offset: z.number().min(1, "offset tidak boleh kurang dari 1"),
+  offset: z.number().min(0, "offset tidak boleh kurang dari 0"),
 });
 export const subjectListGetResponse = responseResultSchema(
   z.array(
@@ -79,7 +79,7 @@ export const subjectListGetResponse = responseResultSchema(
 );
 
 export type SubjectListGetRequest = z.infer<typeof subjectListGetRequest>;
-export type SubjectListGetResponse = z.infer<typeof subjectListGetRequest>;
+export type SubjectListGetResponse = z.infer<typeof subjectListGetResponse>;
 
 // /api/materials
 export const materialsRequest = z.object({
@@ -88,7 +88,7 @@ export const materialsRequest = z.object({
     .number()
     .min(1, "limit setidaknya berisi 1")
     .max(100, "limit memiliki maksimum 100"),
-  offset: z.number().min(1, "offset tidak boleh kurang dari 1"),
+  offset: z.number().min(0, "offset tidak boleh kurang dari 0"),
 });
 export const materialResponse = responseResultSchema(
   z.array(
