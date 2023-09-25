@@ -11,9 +11,12 @@ export async function GET(
   req: NextRequest
 ): Promise<NextResponse<SubjectListGetResponse>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
+  console.log(username);
   const payload = await subjectListGetRequest.safeParseAsync(await req.json());
+  console.log(payload);
 
   if (!payload.success) {
+    console.log("err");
     return NextResponse.json(
       await subjectListGetResponse.parseAsync({
         status: "err",
