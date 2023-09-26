@@ -1,5 +1,6 @@
+import CustomForm from "@/components/CustomForm";
 import SearchIcon from "mdi-react/SearchIcon";
-import React, { useEffect } from "react";
+import React from "react";
 
 export default function SubjectItemSearch({
   onSearch,
@@ -11,7 +12,7 @@ export default function SubjectItemSearch({
   query: string;
 }): JSX.Element {
   return (
-    <div className="w-1/3 flex flex-row items-center border rounded-full border-slate-200">
+    <CustomForm>
       <input
         type="text"
         className="py-2 px-4 rounded-l-full w-full focus:outline-none focus:ring focus:ring-sky-200"
@@ -24,6 +25,6 @@ export default function SubjectItemSearch({
       >
         <SearchIcon size={24} className="fill-white" />
       </button>
-    </div>
+    </CustomForm>
   );
 }
