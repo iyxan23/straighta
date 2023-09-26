@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import LinkButton from "../components/LinkButton";
+import LinkButton from "../../components/LinkButton";
 
 const data: Record<string, () => JSX.Element> = {
   "/dashboard": () => <LinkButton href="/dashboard/study" text="Study" />,

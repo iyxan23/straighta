@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^5.3.1",
