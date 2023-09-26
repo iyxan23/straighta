@@ -1,19 +1,35 @@
 "use client";
 
-import { useListSubjectsQuery } from "@/redux/services/subjectApi";
+import {
+  useLazyListSubjectsQuery,
+  useListSubjectsQuery,
+} from "@/redux/services/subjectApi";
+import React from "react";
 import SubjectItem from "./SubjectItem";
 
-export default function SubjectItems(): JSX.Element {
-  const { data, isFetching, error } = useListSubjectsQuery();
-  if (data && !isFetching) {
-    if (data.status === "err") {
-      // todo
-      return <>Err: {data.reason}</>;
-    }
+const INITIAL_OFFSET = 0;
+const LIMIT = 10;
 
+export default function SubjectItems(): JSX.Element {
+  const [offset, setOffset] = React.useState(INITIAL_OFFSET);
+  const { data, isFetching, error } = useListSubjectsQuery({
+    limit: LIMIT,
+    offset: INITIAL_OFFSET,
+  });
+  const [fetchMore] = useLazyListSubjectsQuery();
+
+  if (isFetching) {
+    return <>Loading</>;
+  }
+
+  if (data && !isFetching) {
+    const moreData = data.length < offset + LIMIT;
+
+    console.log("items");
+    console.log(data);
     return (
       <>
-        {data.payload.map(({ id, title, overallScore }) => (
+        {data.map(({ id, title, overallScore }) => (
           <SubjectItem
             key={id}
             subjectId={id}
@@ -21,8 +37,25 @@ export default function SubjectItems(): JSX.Element {
             overallScore={overallScore}
           />
         ))}
+        {!moreData && (
+          <button
+            onClick={() => {
+              const newOffset = offset + LIMIT;
+              setOffset(newOffset);
+
+              fetchMore({ limit: LIMIT, offset: newOffset });
+            }}
+          >
+            More
+          </button>
+        )}
       </>
     );
   }
-  return <>Loading</>;
+
+  if (error) {
+    return <>Err: {JSON.stringify(error)}</>;
+  }
+
+  return <>Unk state</>;
 }

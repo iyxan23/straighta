@@ -22,7 +22,7 @@ export default function SubjectsView() {
           }}
         />
       </div>
-      <div className="flex flex-col w-2/3 gap-4">
+      <div className="flex flex-col w-2/3 gap-4 mb-8">
         <SubjectItems />
       </div>
     </div>
