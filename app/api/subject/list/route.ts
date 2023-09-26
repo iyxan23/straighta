@@ -1,7 +1,7 @@
 import {
   subjectListGetRequest,
-  type SubjectListGetResponse,
-  subjectListGetResponse,
+  type SubjectListGetResponseResult,
+  subjectListGetResponseResult,
 } from "./../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,24 +9,26 @@ import prisma from "@/prisma";
 
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<SubjectListGetResponse>> {
+): Promise<NextResponse<SubjectListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
-  console.log(username);
-  const payload = await subjectListGetRequest.safeParseAsync(await req.json());
-  console.log(payload);
+  const limit = Number(req.nextUrl.searchParams.get("limit") ?? 10);
+  const offset = Number(req.nextUrl.searchParams.get("offset") ?? 0);
+  // console.log(username);
+  // const payload = await subjectListGetRequest.safeParseAsync(await req.json());
+  // console.log(payload);
 
-  if (!payload.success) {
-    console.log("err");
-    return NextResponse.json(
-      await subjectListGetResponse.parseAsync({
-        status: "err",
-        reason: payload.error.message,
-      }),
-      { status: 400 }
-    );
-  }
+  // if (!payload.success) {
+  //   console.log("err");
+  //   return NextResponse.json(
+  //     await subjectListGetResponseResult.parseAsync({
+  //       status: "err",
+  //       reason: payload.error.message,
+  //     }),
+  //     { status: 400 }
+  //   );
+  // }
 
-  const { limit, offset } = payload.data;
+  // const { limit, offset } = payload.data;
   const subjects = await prisma.subject.findMany({
     skip: offset,
     take: limit,

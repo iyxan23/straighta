@@ -30,7 +30,10 @@ describe("user register and login flow", () => {
 
   test(`create a user named ${USERNAME} with password ${PASSWORD}`, async () => {
     const response = await registerPOST(
-      createMockRequest("POST", { username: USERNAME, password: PASSWORD })
+      createMockRequest({
+        method: "POST",
+        json: { username: USERNAME, password: PASSWORD },
+      })
     );
 
     expect(response.status).toBe(200);
@@ -46,7 +49,10 @@ describe("user register and login flow", () => {
 
   test(`log on to a user named ${USERNAME} with password ${PASSWORD}`, async () => {
     const response = await loginPOST(
-      createMockRequest("POST", { username: USERNAME, password: PASSWORD })
+      createMockRequest({
+        method: "POST",
+        json: { username: USERNAME, password: PASSWORD },
+      })
     );
 
     expect(response.status).toBe(200);
@@ -64,9 +70,12 @@ describe("user register and login flow", () => {
 describe("fail on wrong credentials", () => {
   test(`incorrect password login for user ${USERNAME}`, async () => {
     const response = await loginPOST(
-      createMockRequest("POST", {
-        username: USERNAME,
-        password: WRONG_PASSWORD,
+      createMockRequest({
+        method: "POST",
+        json: {
+          username: USERNAME,
+          password: WRONG_PASSWORD,
+        },
       })
     );
 
@@ -81,9 +90,12 @@ describe("fail on wrong credentials", () => {
 
   test(`incorrect username login for ${NONEXISTENT_USERNAME}`, async () => {
     const response = await loginPOST(
-      createMockRequest("POST", {
-        username: NONEXISTENT_USERNAME,
-        password: WRONG_PASSWORD,
+      createMockRequest({
+        method: "POST",
+        json: {
+          username: NONEXISTENT_USERNAME,
+          password: WRONG_PASSWORD,
+        },
       })
     );
 
@@ -98,9 +110,12 @@ describe("fail on wrong credentials", () => {
 
   test(`invalid login payload`, async () => {
     const response = await loginPOST(
-      createMockRequest("POST", {
-        random: "payload",
-        idk: "bruh",
+      createMockRequest({
+        method: "POST",
+        json: {
+          random: "payload",
+          idk: "bruh",
+        },
       })
     );
 

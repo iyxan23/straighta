@@ -2,13 +2,22 @@ import { NextRequest } from "next/server";
 
 // this looks really stupid, but it is how it is. There is barely any library to be able to test
 // edge-function-style route handles.
-export function createMockRequest(
-  method: "GET" | "POST" | "PUT" | "DELETE",
-  json: any,
-  headers: Record<string, string> = {}
-): NextRequest {
+export function createMockRequest({
+  method,
+  searchParams,
+  json,
+  headers,
+}: {
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  searchParams?: URLSearchParams;
+  json?: any;
+  headers?: Record<string, string>;
+}): NextRequest {
   return {
     method,
+    nextUrl: {
+      searchParams: searchParams,
+    },
     json: () => new Promise((resolve) => resolve(json)),
     headers: new Headers(headers), // thank god the class Headers is very simple
   } as unknown as NextRequest;

@@ -11,6 +11,7 @@ import { createMockRequest, zip } from "@/lib/test-utils";
 import {
   subjectGetResponse,
   subjectListGetResponse,
+  subjectListGetResponseResult,
   subjectPostResponse,
 } from "../schema";
 
@@ -74,8 +75,12 @@ describe("create and list subjects", () => {
 
   for (const subject of SUBJECT_DATASET) {
     test(`create subject '${subject.title}'`, async () => {
-      const request = createMockRequest("POST", subject, {
-        [HEADER_TOKEN_USERNAME]: username,
+      const request = createMockRequest({
+        method: "POST",
+        json: subject,
+        headers: {
+          [HEADER_TOKEN_USERNAME]: username,
+        },
       });
       const response = await subjectPost(request);
 
@@ -107,13 +112,13 @@ describe("create and list subjects", () => {
     SubjectRecord[]
   >(subjectIds, SUBJECT_DATASET)) {
     test(`get subject of '${subject.title}' with id ${id}`, async () => {
-      const request = createMockRequest(
-        "GET",
-        { id },
-        {
+      const request = createMockRequest({
+        method: "GET",
+        searchParams: new URLSearchParams({ id: String(id) }),
+        headers: {
           [HEADER_TOKEN_USERNAME]: username,
-        }
-      );
+        },
+      });
       const response = await subjectGET(request);
 
       const data = await response
@@ -138,18 +143,21 @@ describe("create and list subjects", () => {
   }
 
   test("listing subjects", async () => {
-    const request = createMockRequest(
-      "GET",
-      { limit: 50, offset: 0 },
-      {
+    const request = createMockRequest({
+      method: "GET",
+      searchParams: new URLSearchParams({
+        limit: String(SUBJECT_DATASET.length),
+        offset: "0",
+      }),
+      headers: {
         [HEADER_TOKEN_USERNAME]: username,
-      }
-    );
+      },
+    });
     const response = await subejctListGET(request);
 
     const data = await response
       .json()
-      .then((json) => subjectListGetResponse.safeParseAsync(json));
+      .then((json) => subjectListGetResponseResult.safeParseAsync(json));
 
     expect(data.success).toBe(true);
 
