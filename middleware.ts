@@ -8,7 +8,6 @@ const publicEndpoints = [
   "/api/auth/register",
   "/auth/login",
   "/auth/register",
-  "/_next",
 ];
 
 // if the user is logged in, kick 'em to /dashboard when user tries to access these endpoints
@@ -28,8 +27,6 @@ function injectTokenPayload(req: NextRequest, username: string): NextResponse {
 export default async function middleware(
   req: NextRequest
 ): Promise<NextResponse> {
-  console.log("am a middleware mayyn");
-  console.log(req.nextUrl.pathname);
   const isPublic =
     publicEndpoints.find((ep) => req.nextUrl.pathname.startsWith(ep)) !=
     undefined;
@@ -91,3 +88,15 @@ export default async function middleware(
     }
   }
 }
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!_next/static|_next/image|favicon.ico).*)",
+  ],
+};

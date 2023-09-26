@@ -11,24 +11,10 @@ export async function GET(
   req: NextRequest
 ): Promise<NextResponse<SubjectListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
+
   const limit = Number(req.nextUrl.searchParams.get("limit") ?? 10);
   const offset = Number(req.nextUrl.searchParams.get("offset") ?? 0);
-  // console.log(username);
-  // const payload = await subjectListGetRequest.safeParseAsync(await req.json());
-  // console.log(payload);
 
-  // if (!payload.success) {
-  //   console.log("err");
-  //   return NextResponse.json(
-  //     await subjectListGetResponseResult.parseAsync({
-  //       status: "err",
-  //       reason: payload.error.message,
-  //     }),
-  //     { status: 400 }
-  //   );
-  // }
-
-  // const { limit, offset } = payload.data;
   const subjects = await prisma.subject.findMany({
     skip: offset,
     take: limit,

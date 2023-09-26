@@ -7,17 +7,12 @@ import {
   SubjectListGetResponse,
   subjectListGetResponseResult,
 } from "@/app/api/schema";
-import {
-  createApi,
-  fetchBaseQuery,
-} from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const subjectApi = createApi({
   reducerPath: "subjectApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${
-      window.location.origin ?? process.env["NEXT_PUBLIC_URL"]
-    }/api/subject`,
+    baseUrl: "/api/subject",
   }),
   endpoints: (builder) => ({
     getSubjectById: builder.query<SubjectGetResponse, void>({
