@@ -1,7 +1,9 @@
 import bcryptjs from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
 import { fakerID_ID as faker } from "@faker-js/faker";
+import { nuke } from "./nuke";
 
+console.log("🔌 connecting to the database");
 const prisma = new PrismaClient();
 
 const SUBJECT_DATASET = [
@@ -71,17 +73,8 @@ async function main() {
   });
 }
 
-async function wipe() {
-  for (const a of [
-    prisma.user,
-    prisma.studySession,
-    prisma.studySessionConclusion,
-    prisma.studySessionConclusionItem,
-    prisma.material,
-    prisma.subject,
-  ]) {
-    await (a as unknown as { deleteMany: () => Promise<void> }).deleteMany();
-  }
-}
-
-main().then(() => console.log("seeded database"));
+nuke()
+  .then(() => console.log("💣 sucessfully nuked the database"))
+  .then(() => main())
+  .then(() => console.log("🌱 successfully seeded the database"))
+  .finally(() => prisma.$disconnect());
