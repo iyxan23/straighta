@@ -18,11 +18,7 @@ export default function SubjectItems(): JSX.Element {
   });
   const [fetchMore] = useLazyListSubjectsQuery();
 
-  if (isFetching) {
-    return <>Loading</>;
-  }
-
-  if (data && !isFetching) {
+  if (data) {
     const moreData = data.length < offset + LIMIT;
 
     console.log("items");
@@ -57,5 +53,5 @@ export default function SubjectItems(): JSX.Element {
     return <>Err: {JSON.stringify(error)}</>;
   }
 
-  return <>Unk state</>;
+  return <>Loading...</>;
 }
