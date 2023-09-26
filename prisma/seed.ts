@@ -1,6 +1,6 @@
-const bcryptjs = require("bcryptjs");
-const { PrismaClient } = require("@prisma/client");
-const { fakerID_ID: faker } = require("@faker-js/faker");
+import bcryptjs from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
+import { fakerID_ID as faker } from "@faker-js/faker";
 
 const prisma = new PrismaClient();
 
@@ -80,7 +80,7 @@ async function wipe() {
     prisma.material,
     prisma.subject,
   ]) {
-    await a.deleteMany();
+    await (a as unknown as { deleteMany: () => Promise<void> }).deleteMany();
   }
 }
 
