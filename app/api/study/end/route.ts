@@ -1,0 +1,81 @@
+import { studyEndRequest, StudyEndResponse } from "./../../schema";
+import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/prisma";
+
+const TOLERANCE = 10; // in seconds
+
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<StudyEndResponse>> {
+  const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
+  const data = await studyEndRequest.safeParseAsync(await req.json());
+  if (!data.success) {
+    return NextResponse.json({
+      status: "err",
+      reason: data.error.message,
+    });
+  }
+
+  const {
+    id: studySessionId,
+    time: { studyTime, breakTime },
+    score,
+  } = data.data;
+
+  // this is much better if there would be a postgresql constraint
+  // but we're using prisma here
+  const studySession = await prisma.studySession.findFirst({
+    where: { id: studySessionId },
+  });
+
+  if (!studySession) {
+    return NextResponse.json(
+      {
+        status: "err",
+        reason: `No study session with id ${studySessionId} exists`,
+      },
+      { status: 404 }
+    );
+  }
+
+  // check if studyTime and breakTime correlates to the start study session time
+  // not doing new Date(), who knows node and postgres has different dates
+  const [{ now }] = await prisma.$queryRaw<
+    [{ now: Date }]
+  >`SELECT * FROM now()`;
+
+  const start = studySession.start;
+  start.setSeconds(start.getSeconds() + studyTime + breakTime);
+
+  // compare it to now based on tolerance
+  const difference = now.getTime() - start.getTime();
+
+  const toleranceStart = -(TOLERANCE / 2);
+  const toleranceEnd = TOLERANCE / 2;
+
+  if (difference < toleranceStart || difference > toleranceEnd) {
+    // nah, it aint right, remove the parent
+    await prisma.studySession.delete({ where: { id: studySessionId } });
+    return NextResponse.json({
+      status: "err",
+      reason: "Invalid time",
+    });
+  }
+
+  const session = await prisma.studySessionConclusion.create({
+    data: {
+      study_session_id: studySessionId,
+      after_score: score,
+      study_time: studyTime,
+      break_time: breakTime,
+    },
+  });
+
+  return NextResponse.json({
+    status: "ok",
+    payload: {
+      id: session.id,
+    },
+  });
+}

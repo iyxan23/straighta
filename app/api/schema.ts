@@ -106,10 +106,8 @@ export type MaterialsResponse = z.infer<typeof materialResponse>;
 
 // /api/study/new
 export const studyNewRequest = z.object({
-  focus: z.object({
-    subjectId: z.number(),
-    materalIds: z.array(z.number()),
-  }),
+  materialId: z.number(),
+  score: z.number(),
 });
 export const studyNewResponse = responseResultSchema(
   z.object({ id: z.number() })
@@ -121,19 +119,11 @@ export type StudyNewResponse = z.infer<typeof studyNewResponse>;
 // /api/study/end
 export const studyEndRequest = z.object({
   id: z.number(),
-  materials: z.record(
-    z.number(),
-    z.object({
-      time: z.object({
-        studyTime: z.number(), // relative time in seconds
-        breakTime: z.number(), // relative time in seconds
-      }),
-      score: z.object({
-        subjective: z.number(),
-        objective: z.optional(z.array(z.number())),
-      }),
-    })
-  ),
+  time: z.object({
+    studyTime: z.number(), // relative time in seconds
+    breakTime: z.number(), // relative time in seconds
+  }),
+  score: z.number(),
 });
 export const studyEndResponse = responseResultSchema(
   z.object({ id: z.number() })

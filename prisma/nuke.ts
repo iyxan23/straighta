@@ -9,7 +9,6 @@ export async function nuke() {
     prisma.user,
     prisma.studySession,
     prisma.studySessionConclusion,
-    prisma.studySessionConclusionItem,
   ]) {
     await (
       model as unknown as { deleteMany: () => Promise<void> }
