@@ -97,7 +97,7 @@ export const materialsRequest = z.object({
 });
 export const materialResponse = responseResultSchema(
   z.array(
-    z.object({ id: z.number(), title: z.string(), oveallScore: z.number() })
+    z.object({ id: z.number(), title: z.string(), overallScore: z.number() })
   )
 );
 
