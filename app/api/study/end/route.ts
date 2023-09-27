@@ -39,6 +39,16 @@ export async function POST(
     );
   }
 
+  if (studySession.username !== username) {
+    return NextResponse.json(
+      {
+        status: "err",
+        reason: `No study session with id ${studySessionId} exists`,
+      },
+      { status: 404 }
+    );
+  }
+
   // check if studyTime and breakTime correlates to the start study session time
   // not doing new Date(), who knows node and postgres has different dates
   const [{ now }] = await prisma.$queryRaw<
