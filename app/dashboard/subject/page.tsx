@@ -3,7 +3,7 @@ import SubjectsView from "./SubjectsView";
 export default function SubjectPage() {
   return (
     <div className="h-full p-8 bg-slate-100 overflow-y-scroll flex flex-col items-center">
-      <h1 className="text-3xl font-bold text-slate-700">Materials</h1>
+      <h1 className="text-3xl font-bold text-slate-700">Pembelajaran</h1>
       <SubjectsView />
       {/* <div className="flex flex-col items-center w-screen">
         <div className="sticky -top-8 flex flex-col items-center p-8 w-full bg-slate-100">
