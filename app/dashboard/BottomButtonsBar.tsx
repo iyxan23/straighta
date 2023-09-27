@@ -8,11 +8,13 @@ import { usePathname } from "next/navigation";
 import LinkButton from "../../components/LinkButton";
 
 const data: Record<string, (dispatch: AppDispatch) => JSX.Element> = {
-  "/dashboard": () => <LinkButton href="/dashboard/study" text="Study" />,
+  "/dashboard": () => (
+    <CallbackButton text="Belajar" size="lg" onClick={() => {}} />
+  ),
   "/dashboard/subject": (dispatch) => (
     <>
       <CallbackButton
-        text="Create Subject"
+        text="Tambah"
         size="lg"
         onClick={() => dispatch(openNewSubjectModal())}
       />
