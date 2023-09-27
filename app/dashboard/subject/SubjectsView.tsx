@@ -2,7 +2,11 @@
 
 import CallbackButton from "@/components/CallbackButton";
 import Modal from "@/components/Modal";
-import { closeModal } from "@/redux/features/newSubjectModalVisibilitySlice";
+import {
+  closeNewSubjectModal,
+  finishNewSubjectModal,
+  setSubjectName,
+} from "@/redux/features/newSubjectModalSlice";
 import { setQuery } from "@/redux/features/querySlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,9 +16,10 @@ import SubjectItemSearch from "./SubjectItemSearch";
 
 export default function SubjectsView() {
   const query = useAppSelector((state) => state.query.query);
-  const modalOpen = useAppSelector(
-    (state) => state.newSubjectModalVisibility.visible
+  const newSubjectName = useAppSelector(
+    (state) => state.newSubjectModal.newSubjectName
   );
+  const modalOpen = useAppSelector((state) => state.newSubjectModal.visible);
   const dispatch = useAppDispatch();
 
   return (
@@ -45,14 +50,31 @@ export default function SubjectsView() {
           className="z-20 fixed top-0 bottom-0 w-screen h-screen bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center"
         >
           <Modal
-            title={"hello world"}
-            description={"bruhadhaskdasdasjdlkkjdkas"}
-            buttons={() => (
+            content={() => (
               <>
-                <CallbackButton
-                  text="deez"
-                  onClick={() => dispatch(closeModal())}
+                <h2 className="text-xl font-bold text-slate-700">
+                  Buat pembelajaran baru
+                </h2>
+                <p>Nama pembelajaran:</p>
+                <input
+                  value={newSubjectName}
+                  onChange={(ev) => dispatch(setSubjectName(ev.target.value))}
+                  className="border"
+                  type="text"
                 />
+                <div className="flex flex-row gap-2 justify-end">
+                  <CallbackButton
+                    text="Close"
+                    size="md"
+                    className="bg-red-500 hover:bg-red-400 active:bg-red-700 focus:ring-red-200"
+                    onClick={() => dispatch(closeNewSubjectModal())}
+                  />
+                  <CallbackButton
+                    text="OK"
+                    size="md"
+                    onClick={() => dispatch(finishNewSubjectModal())}
+                  />
+                </div>
               </>
             )}
           />
