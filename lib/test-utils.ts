@@ -23,9 +23,13 @@ export function createMockRequest({
   } as unknown as NextRequest;
 }
 
-export function zip<A, B, ListA extends A[], ListB extends B[]>(
+export function zip<A, B, ListA extends A[] = A[], ListB extends B[] = B[]>(
   a: ListA,
   b: ListB
 ): [A, B][] {
   return a.map((k: A, i: number) => [k, b[i]]);
+}
+
+export function sleep(millis: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, millis));
 }
