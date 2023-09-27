@@ -1,19 +1,24 @@
 "use client";
 
+import CallbackButton from "@/components/CallbackButton";
+import { openModal } from "@/redux/features/newSubjectModalVisibilitySlice";
+import { useAppDispatch } from "@/redux/hooks";
+import { AppDispatch } from "@/redux/store";
 import { usePathname } from "next/navigation";
 import LinkButton from "../../components/LinkButton";
 
-const data: Record<string, () => JSX.Element> = {
+const data: Record<string, (dispatch: AppDispatch) => JSX.Element> = {
   "/dashboard": () => <LinkButton href="/dashboard/study" text="Study" />,
-  "/dashboard/subject": () => (
+  "/dashboard/subject": (dispatch) => (
     <>
-      <LinkButton href="/dashboard/subject/new" text="Create Subject" />
+      <CallbackButton text="Create Subject" onClick={() => dispatch(openModal())} />
     </>
   ),
 };
 
 export default function BottomButtonsBar() {
+  const dispatch = useAppDispatch();
   const pathname = usePathname();
 
-  return data[pathname]();
+  return data[pathname](dispatch);
 }

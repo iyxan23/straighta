@@ -24,6 +24,14 @@ export default function SubjectItems(): JSX.Element {
   }, [fetchMore, offset]);
 
   if (data) {
+    if (data.length == 0) {
+      return (
+        <p className="w-full mt-12 text-slate-600 text-center">
+          Belum ada pembelajaran yang ditambah <br />
+          Ketuk tombol di bawah untuk memulai!
+        </p>
+      );
+    }
     const moreData = data.length < offset + LIMIT;
 
     return (
