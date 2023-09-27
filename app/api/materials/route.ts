@@ -1,31 +1,28 @@
 import {
-  type MaterialsResponse,
+  materialsGetRequest,
+  type MaterialsGetResponse,
   type SubjectListGetResponseResult,
 } from "./../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
-// import { sleep } from "@/lib/test-utils";
+import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<MaterialsResponse>> {
+): Promise<NextResponse<MaterialsGetResponse>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
+  const data = searchParamsToObject(req.nextUrl.searchParams);
 
-  const subjectIdParam = req.nextUrl.searchParams.get("subjectId");
-  if (!subjectIdParam) {
-    return NextResponse.json(
-      {
-        status: "err",
-        reason: "Required: subjectId GET parameter",
-      },
-      { status: 400 }
-    );
+  const result = await materialsGetRequest.safeParseAsync(data);
+  if (!result.success) {
+    return NextResponse.json({
+      status: "err",
+      reason: result.error.message,
+    });
   }
 
-  const subjectId = Number(subjectIdParam);
-  const limit = Number(req.nextUrl.searchParams.get("limit") ?? 10);
-  const offset = Number(req.nextUrl.searchParams.get("offset") ?? 0);
+  const { subjectId, limit, offset } = result.data;
 
   const materials = await prisma.material.findMany({
     skip: offset,

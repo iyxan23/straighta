@@ -8,23 +8,25 @@ import {
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import prisma from "@/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest
 ): Promise<NextResponse<SubjectGetResponse>> {
-  const payload = await subjectGetRequest.safeParseAsync(await req.json());
+  const payload = await searchParamsToObject(req.nextUrl.searchParams);
+  const data = await subjectGetRequest.safeParseAsync(payload);
 
-  if (!payload.success) {
+  if (!data.success) {
     return NextResponse.json(
       {
         status: "err",
-        reason: payload.error.message,
+        reason: data.error.message,
       },
       { status: 400 }
     );
   }
 
-  const { id } = payload.data;
+  const { id } = data.data;
   const subject = await prisma.subject.findFirst({
     where: {
       id,

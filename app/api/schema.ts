@@ -1,4 +1,4 @@
-import { string, z } from "zod";
+import { z } from "zod";
 
 export const responseResultSchema = <T>(payloadSchema: z.ZodSchema<T>) =>
   z.discriminatedUnion("status", [
@@ -33,7 +33,7 @@ export type AuthRegisterResponse = z.infer<typeof authRegisterResponse>;
 // /api/subject
 //  -> GET: retrieve a specific subject and its materials
 export const subjectGetRequest = z.object({
-  id: z.number(),
+  id: z.coerce.number(),
 });
 export const subjectGetResponse = responseResultSchema(
   z.object({
@@ -62,12 +62,15 @@ export type SubjectPostResponse = z.infer<typeof subjectPostResponse>;
 
 // /api/subject/list
 export const subjectListGetRequest = z.object({
-  limit: z
+  limit: z.coerce
     .number()
     .min(1, "limit setidaknya berisi 1")
     .max(100, "limit memiliki maksimum 100")
     .default(10),
-  offset: z.number().min(0, "offset tidak boleh kurang dari 0").default(0),
+  offset: z.coerce
+    .number()
+    .min(0, "offset tidak boleh kurang dari 0")
+    .default(0),
 });
 export const subjectListGetResponse = z.array(
   z.object({
@@ -88,12 +91,12 @@ export type SubjectListGetResponseResult = z.infer<
 
 // /api/materials
 export const materialsRequest = z.object({
-  subjectId: z.number(),
-  limit: z
+  subjectId: z.coerce.number(),
+  limit: z.coerce
     .number()
     .min(1, "limit setidaknya berisi 1")
     .max(100, "limit memiliki maksimum 100"),
-  offset: z.number().min(0, "offset tidak boleh kurang dari 0"),
+  offset: z.coerce.number().min(0, "offset tidak boleh kurang dari 0"),
 });
 export const materialResponse = responseResultSchema(
   z.array(
@@ -106,8 +109,8 @@ export type MaterialsResponse = z.infer<typeof materialResponse>;
 
 // /api/study/new
 export const studyNewRequest = z.object({
-  materialId: z.number(),
-  score: z.number(),
+  materialId: z.coerce.number(),
+  score: z.coerce.number(),
 });
 export const studyNewResponse = responseResultSchema(
   z.object({ id: z.number() })
@@ -118,12 +121,12 @@ export type StudyNewResponse = z.infer<typeof studyNewResponse>;
 
 // /api/study/end
 export const studyEndRequest = z.object({
-  id: z.number(),
+  id: z.coerce.number(),
   time: z.object({
-    studyTime: z.number(), // relative time in seconds
-    breakTime: z.number(), // relative time in seconds
+    studyTime: z.coerce.number(), // relative time in seconds
+    breakTime: z.coerce.number(), // relative time in seconds
   }),
-  score: z.number(),
+  score: z.coerce.number(),
 });
 export const studyEndResponse = responseResultSchema(
   z.object({ id: z.number() })

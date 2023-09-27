@@ -33,3 +33,15 @@ export function zip<A, B, ListA extends A[] = A[], ListB extends B[] = B[]>(
 export function sleep(millis: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, millis));
 }
+
+export function searchParamsToObject(
+  searchParams: URLSearchParams
+): Record<string, string> {
+  return Array.from(searchParams).reduce(
+    (prev, [key, value]) => {
+      prev[key] = value;
+      return prev;
+    },
+    {} as Record<string, string>
+  );
+}

@@ -7,7 +7,7 @@ import { LOGIN_REDIRECT_TO, POST as loginPOST } from "./login/route";
 import { POST as registerPOST, REGISTER_REDIRECT_TO } from "./register/route";
 import { describe, test, expect, beforeAll, afterAll } from "@jest/globals";
 import prisma from "@/prisma";
-import { createMockRequest } from "@/lib/test-utils";
+import { createMockRequest } from "@/lib/utils";
 
 // iyxan23 - 24 sept:
 //     should be better to provide a shim for the database we don't want to be

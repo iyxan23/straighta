@@ -7,6 +7,8 @@ This is a collection of StraightA APIs. Nulis ini biar gak lupa wkkww
 
 Every of these types are declared as a zod schema on the file `/app/api/schema.ts`.
 
+GET requests' Request type is specified through the get parameters / search parameters.
+
 ### Generic Response error-handling type
 
 ```typescript
@@ -151,10 +153,7 @@ Creates a new studying session
 
 ```typescript
 type Request = {
-  focus: {
-    subjectId: number;
-    materialIds: number[];
-  };
+  materialId: number;
 };
 
 type Response = ResponseResult<{
@@ -177,19 +176,11 @@ aplikasi ini untuk apa?
 ```typescript
 type Request = {
   id: number;
-  materials: Record<
-    number, // material id
-    {
-      time: {
-        studyTime: number; // relative time in seconds
-        breakTime: number; // relative time in seconds
-      };
-      score: {
-        subjective: number;
-        objective?: number[];
-      };
-    }
-  >;
+  time: {
+    studyTime: number; // relative time in seconds
+    breakTime: number; // relative time in seconds
+  };
+  score: number;
 };
 
 type Response = ResponseResult<{}>; // no payload

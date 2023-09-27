@@ -7,7 +7,7 @@ import { describe, test, expect, beforeAll, afterAll } from "@jest/globals";
 import { POST as subjectPost, GET as subjectGET } from "./route";
 import { GET as subejctListGET } from "./list/route";
 import prisma from "@/prisma";
-import { createMockRequest, zip } from "@/lib/test-utils";
+import { createMockRequest, zip } from "@/lib/utils";
 import {
   subjectGetResponse,
   subjectListGetResponse,
