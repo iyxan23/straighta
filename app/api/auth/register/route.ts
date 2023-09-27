@@ -1,4 +1,7 @@
-import { authRegisterResponse, authRegisterRequest } from "./../../schema";
+import {
+  authRegisterPostResponse,
+  authRegisterPostRequest,
+} from "./../../schema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
 import bcryptjs from "bcryptjs";
@@ -9,13 +12,13 @@ import { UNABLE_TO_CREATE_USER } from "../../errors";
 export const REGISTER_REDIRECT_TO = "/auth/register/questions";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const payloadParseResult = await authRegisterRequest.safeParseAsync(
+  const payloadParseResult = await authRegisterPostRequest.safeParseAsync(
     await request.json()
   );
 
   if (!payloadParseResult.success) {
     return NextResponse.json(
-      await authRegisterResponse.parseAsync({
+      await authRegisterPostResponse.parseAsync({
         status: "err",
         reason: payloadParseResult.error.message,
       }),
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (err) {
     console.error(err);
     return NextResponse.json(
-      await authRegisterResponse.parseAsync({
+      await authRegisterPostResponse.parseAsync({
         status: "err",
         reason: UNABLE_TO_CREATE_USER,
       }),
@@ -42,7 +45,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const response = NextResponse.json(
-    await authRegisterResponse.parseAsync({
+    await authRegisterPostResponse.parseAsync({
       status: "ok",
       payload: {
         redirect: REGISTER_REDIRECT_TO,

@@ -1,6 +1,6 @@
 "use client";
 
-import { authLoginResponse } from "@/app/api/schema";
+import { authLoginPostResponse } from "@/app/api/schema";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -46,7 +46,9 @@ export default function LoginForm() {
               body: JSON.stringify({ username, password }),
             })
               .then((response) => response.json())
-              .then((response) => authLoginResponse.safeParseAsync(response))
+              .then((response) =>
+                authLoginPostResponse.safeParseAsync(response)
+              )
               .then((response) => {
                 setSubmitting(false);
                 if (!response.success) {

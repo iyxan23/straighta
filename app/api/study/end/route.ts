@@ -1,4 +1,4 @@
-import { studyEndRequest, StudyEndResponse } from "./../../schema";
+import { studyEndPostRequest, StudyEndPostResponse } from "./../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
@@ -7,9 +7,9 @@ const TOLERANCE = 10; // in seconds
 
 export async function POST(
   req: NextRequest
-): Promise<NextResponse<StudyEndResponse>> {
+): Promise<NextResponse<StudyEndPostResponse>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
-  const data = await studyEndRequest.safeParseAsync(await req.json());
+  const data = await studyEndPostRequest.safeParseAsync(await req.json());
   if (!data.success) {
     return NextResponse.json({
       status: "err",

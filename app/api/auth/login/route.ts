@@ -1,5 +1,5 @@
 import { INVALID_CREDENTIALS } from "./../../errors";
-import { authLoginRequest, authLoginResponse } from "./../../schema";
+import { authLoginPostRequest, authLoginPostResponse } from "./../../schema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
 import bcryptjs from "bcryptjs";
@@ -9,13 +9,13 @@ import { getJWTSecretKey } from "@/lib/auth";
 export const LOGIN_REDIRECT_TO = "/dashboard";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const payloadParseResult = await authLoginRequest.safeParseAsync(
+  const payloadParseResult = await authLoginPostRequest.safeParseAsync(
     await request.json()
   );
 
   if (!payloadParseResult.success) {
     return NextResponse.json(
-      await authLoginResponse.parseAsync({
+      await authLoginPostResponse.parseAsync({
         status: "err",
         reason: payloadParseResult.error.message,
       }),
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   if (!user) {
     return NextResponse.json(
-      await authLoginResponse.parseAsync({
+      await authLoginPostResponse.parseAsync({
         status: "err",
         reason: INVALID_CREDENTIALS,
       }),
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!(await bcryptjs.compare(password, user.password))) {
     // invalid password
     return NextResponse.json(
-      await authLoginResponse.parseAsync({
+      await authLoginPostResponse.parseAsync({
         status: "err",
         reason: INVALID_CREDENTIALS,
       }),
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // yey! user benarr!
   const response = NextResponse.json(
-    await authLoginResponse.parseAsync({
+    await authLoginPostResponse.parseAsync({
       status: "ok",
       payload: {
         redirect: LOGIN_REDIRECT_TO,

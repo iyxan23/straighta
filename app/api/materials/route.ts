@@ -1,7 +1,6 @@
 import {
   materialsGetRequest,
   type MaterialsGetResponse,
-  type SubjectListGetResponseResult,
 } from "./../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
