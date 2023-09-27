@@ -12,7 +12,7 @@ export default function Modal({
   buttons: () => JSX.Element;
 }) {
   return (
-    <div className="z-20 rounded-lg shadow-md flex flex-col p-4 gap-2 bg-white">
+    <div className="z-20 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white">
       <h2 className="text-lg font-bold text-slate-800">{title}</h2>
       <p className="text-slate-700">{description}</p>
       <div className="flex flex-row p-2">{buttons()}</div>
