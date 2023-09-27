@@ -1,4 +1,4 @@
-import LinkButton from "@/app/components/LinkButton";
+import Buttons from "./Buttons";
 
 export default function StudyPage() {
   return (
@@ -19,10 +19,7 @@ export default function StudyPage() {
         </h2>
       </div>
 
-      <div className="flex flex-row gap-4">
-        <LinkButton text="Selesai" href="/dashboard" />
-        <LinkButton text="Istirahat" href="/dashboard" />
-      </div>
+      <Buttons />
     </main>
   );
 }
