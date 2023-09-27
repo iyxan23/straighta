@@ -19,7 +19,7 @@ Goal of a scheduled study session:
 
 - Stop a material's score decline
 - Increase a material's otherwise low score
-- Keep a material's score at a safe range
+- Reharse infrequently studied materials
 
 ### Variables
 
@@ -39,22 +39,27 @@ Algoritma akan membandingkan dari ketiga goal dari study session:
 
 - Stop a material's score decline (Reviving)
 - Increase a material's otherwise low score (Opportunities)
-- Keep a material's score at a safe range (Review)
+- Reharse infrequently studied materials (Review)
 
-Arbitrary percentage: 70% 20% 10%
+Arbitrary percentage: 50% 30% 20%
 
 Each of these three will be calculated for every material:
 
 - BI (declined 12 over the past 3 days), Sj (declined 7 over the past 2 days), Math (declined 13 over the past 3 days)
 - PJOK (now 46), PPKn (now 34)
-- IPA (97), IPS (96)
+- IPA (last studied 1 month ago), IPS (last studied 1 and a half month ago)
 
 (anggap saja pembelajaran2 ini adalah materi)
 
 On 1 and 2, the materials will be sorted in an ascending order, which means selected subjects will be the "worst" ones.
 On 3, it will be sorted descendingly, and subjects that aren't frequent will be prioritised.
 
-If there is little to no decline, then 2 and 3 will expand accordingly.
+Determining a "declining material":
+
+- Sum up the differences of growth in a week. Save it as `weekTrend`
+- If it's negative, that's a declining material.
+
+If there is little to no decline, then 2 and 3 will expand accordingly (since they are "infinite", and there will always be something to increase score and review)
 
 Now that we've chosen our material. Let's see if they fit in the schedule. A subject may be
 referenced more than one day.
@@ -75,6 +80,12 @@ Weight: How impactful if a study session were to be conducted on this specific m
 the weights according to the arbitrarily-set percentage, and weigh each material to get the highest
 weights.
 
+Weight: ranges from 1-7 (schedules for each day)
+
+A material that gets computed 1 weight means that it takes one study session.
+
+StraightA has the capacity of 7 (1 weighed material per day). If a material is weighed to be 2, that material will be studied for 2 study sessions spanning over two days (which means its quite important).
+
 Okay, okay I'm getting some ideas
 
 What if we calculate the effectiveness of a study session based on previous study sessions, per minute.
@@ -83,9 +94,42 @@ Since a study session can contain a break and study time. We will only need the 
 Then calculate the difference between the before & after tests (that can vary), and then compare it
 to other study sessions?
 
-Weight for declining: 
+Weight for declining:
 
-### Calculated decline of material score
+- Get the growth between the before study session & after divided by the study duration (the mean of all study sessions). Store it as `scoreGrowthOverTime`
+- Compute the estimated amount of time needed to achieve the desired score. Since the material's score is declining, the target is the previous highest score. Math: `scoreGrowthOverTime * targetScore = timeRequired`. Then `timeRequired / timePerStudySession = weight`
+
+Weight for low score:
+
+- The same algorithm with "declining". But the target will be `lowScore + ((fullScore - lowScore) * studyIntensity)` (given that studyIntensity is a range from 0 to 1)
+
+Weight for infrequently studied materials:
+
+- Sort materials' last study time from lowest to highest
+- Get the median of last study time of each materials
+- The same algorithm with "low score". TODO
+
+<!-- Then combine each to a 50% 30% and 20% distribution. Except that if there isn't any declining material, it will only be 60% and 40%. -->
+
+In a loop, remove material with the least weight, see the sum if it's getting closer to 7. Ketika sebuah skor material membuat sum lebih dari 7. Maka masukkan dia, lalu sesuaikan jadi 7.
+
+Setiap material akan ditimbang weight nya, dan dijadwalkan sesuai weightnya masing-masing; ingat, 1 weight = 1 study session.
+
+Maka di akhir akan terbuat sebuah jadwal, yay!
+
+Mungkin at the end, penerima algorithm akan randomize ordernya agar lebih terdistribusi.
+
+### "Score effort" interpolation
+
+Ah right, I had just passed to my mind that it's easier to go from 50 to 70, but it's difficult to go from 80 to 90.
+
+So I think we need a some kind of interpolation to resect the effort needed to climb from a specific score to another score.
+
+Something like a quadratic interplation makes sense.
+
+But I have no idea how to integrate it with the algorithm yet.
+
+### Automated decline of material score
 
 Every week, a material's overall score will be reduced based on the distance between:
 
