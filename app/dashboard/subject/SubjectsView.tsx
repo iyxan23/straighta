@@ -5,10 +5,12 @@ import Modal from "@/components/Modal";
 import {
   closeNewSubjectModal,
   finishNewSubjectModal,
+  setSubjectMaterials,
   setSubjectName,
 } from "@/redux/features/newSubjectModalSlice";
 import { setQuery } from "@/redux/features/querySlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useCreateSubjectMutation } from "@/redux/services/subjectApi";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import SubjectItems from "./SubjectItems";
@@ -19,9 +21,14 @@ export default function SubjectsView() {
   const newSubjectName = useAppSelector(
     (state) => state.newSubjectModal.newSubjectName
   );
+  const newSubjectMaterials = useAppSelector(
+    (state) => state.newSubjectModal.subjectMaterials
+  );
   const modalOpen = useAppSelector((state) => state.newSubjectModal.visible);
   const dispatch = useAppDispatch();
 
+  const [createSubject, { isLoading: createSubjectLoading }] =
+    useCreateSubjectMutation();
   return (
     <AnimatePresence>
       <div className="flex flex-col items-center w-screen">
@@ -37,6 +44,7 @@ export default function SubjectsView() {
           />
         </div>
         <div className="flex flex-col w-2/3 gap-4 mb-8">
+          {createSubjectLoading && <>Membuat subjek {newSubjectName}...</>}
           <SubjectItems />
         </div>
       </div>
@@ -62,6 +70,18 @@ export default function SubjectsView() {
                   className="border"
                   type="text"
                 />
+                <p>Materi-materi pembelajaran tersebut:</p>
+                <input
+                  value={newSubjectMaterials}
+                  onChange={(ev) =>
+                    dispatch(setSubjectMaterials(ev.target.value))
+                  }
+                  className="border"
+                  type="text"
+                />
+                <p className="text-sm opacity-50">
+                  (pisah menggunakan koma (,))
+                </p>
                 <div className="flex flex-row gap-2 justify-end">
                   <CallbackButton
                     text="Close"
@@ -72,7 +92,16 @@ export default function SubjectsView() {
                   <CallbackButton
                     text="OK"
                     size="md"
-                    onClick={() => dispatch(finishNewSubjectModal())}
+                    onClick={() => {
+                      createSubject({
+                        title: newSubjectName,
+                        materials:
+                          newSubjectMaterials.trim().length !== 0
+                            ? newSubjectMaterials.trim().split(",")
+                            : undefined,
+                      });
+                      dispatch(finishNewSubjectModal());
+                    }}
                   />
                 </div>
               </>

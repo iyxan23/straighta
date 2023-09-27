@@ -3,12 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type NewSubjectModalState = {
   visible: boolean;
   newSubjectName: string;
-  finalizedSubjectName?: string;
+  subjectMaterials: string;
 };
 
 const initialState = {
   visible: false,
   newSubjectName: "",
+  subjectMaterials: "",
 } as NewSubjectModalState;
 
 export const counter = createSlice({
@@ -18,13 +19,20 @@ export const counter = createSlice({
     reset: () => initialState,
     finishNewSubjectModal: (state: NewSubjectModalState) => {
       state.visible = false;
-      state.finalizedSubjectName = state.newSubjectName;
+      state.newSubjectName = "";
+      state.subjectMaterials = "";
     },
     setSubjectName: (
       state: NewSubjectModalState,
       payload: PayloadAction<string>
     ) => {
       state.newSubjectName = payload.payload;
+    },
+    setSubjectMaterials: (
+      state: NewSubjectModalState,
+      payload: PayloadAction<string>
+    ) => {
+      state.subjectMaterials = payload.payload;
     },
     closeNewSubjectModal: (state: NewSubjectModalState) => {
       state.visible = false;
@@ -38,6 +46,7 @@ export const counter = createSlice({
 export const {
   reset,
   setSubjectName,
+  setSubjectMaterials,
   closeNewSubjectModal,
   openNewSubjectModal,
   finishNewSubjectModal,

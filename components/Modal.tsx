@@ -8,7 +8,7 @@ export default function Modal({
   content: () => JSX.Element;
 }) {
   return (
-    <div className="z-20 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white">
+    <div className="z-20 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white max-w-lg">
       {content()}
     </div>
   );

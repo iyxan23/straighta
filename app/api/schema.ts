@@ -48,17 +48,20 @@ export const subjectPostRequest = z.object({
   title: z.string(),
   materials: z.optional(z.array(z.string())),
 });
-export const subjectPostResponse = responseResultSchema(
-  z.object({
-    id: z.number(),
-  })
-);
+export const subjectPostResponse = z.object({
+  id: z.number(),
+});
+export const subjectPostResponseResult =
+  responseResultSchema(subjectPostResponse);
 
 export type SubjectGetRequest = z.infer<typeof subjectGetRequest>;
 export type SubjectGetResponse = z.infer<typeof subjectGetResponse>;
 
 export type SubjectPostRequest = z.infer<typeof subjectPostRequest>;
 export type SubjectPostResponse = z.infer<typeof subjectPostResponse>;
+export type SubjectPostResponseResult = z.infer<
+  typeof subjectPostResponseResult
+>;
 
 // /api/subject/list
 export const subjectListGetRequest = z.object({

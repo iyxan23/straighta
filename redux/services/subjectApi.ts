@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  SubjectPostRequest,
+  SubjectPostResponse,
+  subjectPostResponseResult,
   subjectGetResponse,
   SubjectGetResponse,
   SubjectListGetRequest,
@@ -15,6 +18,7 @@ export const subjectApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "/api/subject",
   }),
+  tagTypes: ["subject"],
   endpoints: (builder) => ({
     getSubjectById: builder.query<SubjectGetResponse, void>({
       query: () => "",
@@ -67,6 +71,30 @@ export const subjectApi = createApi({
           )
         ),
       forceRefetch: ({ currentArg, previousArg }) => currentArg !== previousArg,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map((r) => ({ type: "subject" as const, id: r.id })),
+              { type: "subject", id: "LIST" },
+            ]
+          : [{ type: "subject", id: "LIST" }],
+    }),
+    createSubject: builder.mutation<SubjectPostResponse, SubjectPostRequest>({
+      query: (body) => ({ url: "", method: "POST", body: body }),
+      transformResponse: async (resp) => {
+        try {
+          const result = await subjectPostResponseResult.parseAsync(resp);
+          if (result.status === "err") {
+            throw new Error(result.reason);
+          }
+          return result.payload;
+        } catch (e) {
+          console.error(`Server sent an invalid response of /api/subject:`);
+          console.error(e);
+          throw e;
+        }
+      },
+      invalidatesTags: [{ type: "subject", id: "LIST" }],
     }),
   }),
 });
@@ -77,4 +105,6 @@ export const {
 
   useListSubjectsQuery,
   useLazyListSubjectsQuery,
+
+  useCreateSubjectMutation,
 } = subjectApi;

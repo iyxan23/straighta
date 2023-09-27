@@ -2,8 +2,8 @@ import {
   subjectGetRequest,
   SubjectGetResponse,
   subjectPostRequest,
-  SubjectPostResponse,
-  subjectPostResponse,
+  SubjectPostResponseResult,
+  subjectPostResponseResult,
 } from "./../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import prisma from "@/prisma";
@@ -59,13 +59,13 @@ export async function GET(
 
 export async function POST(
   req: NextRequest
-): Promise<NextResponse<SubjectPostResponse>> {
+): Promise<NextResponse<SubjectPostResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await subjectPostRequest.safeParseAsync(await req.json());
 
   if (!payload.success) {
     return NextResponse.json(
-      await subjectPostResponse.parseAsync({
+      await subjectPostResponseResult.parseAsync({
         status: "err",
         reason: payload.error.message,
       }),
@@ -74,6 +74,8 @@ export async function POST(
   }
 
   const { title, materials } = payload.data;
+
+  console.log(`creating subject ${title} for ${username}`);
 
   const result = await prisma.subject.create({
     data: {

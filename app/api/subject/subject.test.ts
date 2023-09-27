@@ -12,7 +12,7 @@ import {
   subjectGetResponse,
   subjectListGetResponse,
   subjectListGetResponseResult,
-  subjectPostResponse,
+  subjectPostResponseResult,
 } from "../schema";
 
 describe("create and list subjects", () => {
@@ -86,7 +86,7 @@ describe("create and list subjects", () => {
 
       const data = await response
         .json()
-        .then((json) => subjectPostResponse.safeParseAsync(json));
+        .then((json) => subjectPostResponseResult.safeParseAsync(json));
 
       expect(data.success).toBe(true);
 

@@ -60,13 +60,17 @@ const SUBJECT_DATASET = [
   },
 ];
 
+const PASSWORD = "1234567890";
+
 async function main() {
   const user = await prisma.user.create({
     data: {
       username: faker.internet.userName(),
-      password: await bcryptjs.hash("1234567890", 12),
+      password: await bcryptjs.hash(PASSWORD, 12),
     },
   });
+
+  console.log(`🌱 [I] username: ${user.username}, password: ${PASSWORD}`);
 
   await prisma.subject.createMany({
     data: SUBJECT_DATASET.map((s) => ({ ...s, owner_username: user.username })),
