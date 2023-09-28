@@ -7,13 +7,9 @@ export type Range = [number, number];
 
 const MAX_RANGE = 86400; // seconds in a day
 
-type TimeBlockColor = "blue" | "green" | "black" | "opaque-gray";
+type TimeBlockColor = "blue" | "green" | "black" | "blocked";
 
-function renderTimeBlock(
-  [from, to]: Range,
-  color: TimeBlockColor,
-  containerHeight: number
-) {
+function renderTimeBlock([from, to]: Range, color: TimeBlockColor) {
   return (
     <div
       key={`${from}${to}`}
@@ -21,24 +17,27 @@ function renderTimeBlock(
           ${color == "blue" && "bg-sky-500"}
           ${color == "green" && "bg-green-500"}
           ${color == "black" && "bg-slate-500"}
-          ${color == "opaque-gray" && "bg-slate-400 opacity-50"}
-          w-full absolute`}
+          ${color == "blocked" && "bg-purple-300 opacity-50"}
+          w-full absolute text-white text-sm
+          flex justify-center
+          items-center text-opacity-75
+          ${
+            color != "blocked" &&
+            "hover:scale-105 hover:ring hover:ring-sky-200 hover:shadow-md cursor-pointer"
+          }
+          transition-all rounded-sm`}
       style={{
-        height: ((to - from) / MAX_RANGE) * containerHeight,
-        bottom: (from / MAX_RANGE) * containerHeight,
+        height: `${((to - from) / MAX_RANGE) * 100}%`,
+        bottom: `${(from / MAX_RANGE) * 100}%`,
       }}
-    ></div>
+    >
+      {color != "blocked" && "Hello world"}
+    </div>
   );
 }
 
-function renderTimeBlocks(
-  ranges: Range[],
-  color: TimeBlockColor,
-  containerHeight: number
-) {
-  return (
-    <>{ranges.map((range) => renderTimeBlock(range, color, containerHeight))}</>
-  );
+function renderTimeBlocks(ranges: Range[], color: TimeBlockColor) {
+  return <>{ranges.map((range) => renderTimeBlock(range, color))}</>;
 }
 
 // A schedule item ranges from 0 - 86.400 (seconds)
@@ -61,47 +60,47 @@ export default function ScheduleItem({
     text: string;
   };
 }) {
-  const container = useRef<HTMLDivElement>();
-  const [containerHeight, setContainerHeight] = React.useState(0);
+  // const container = useRef<HTMLDivElement>();
+  // const [containerHeight, setContainerHeight] = React.useState(0);
 
-  useEffect(() => {
-    const calculateContainerHeight = () => {
-      setContainerHeight(
-        container.current?.getBoundingClientRect().height ?? 128
-      );
-    };
+  // useEffect(() => {
+  //   const calculateContainerHeight = () => {
+  //     setContainerHeight(
+  //       container.current?.getBoundingClientRect().height ?? 128
+  //     );
+  //   };
 
-    window.addEventListener("resize", calculateContainerHeight);
+  //   window.addEventListener("resize", calculateContainerHeight);
 
-    if (containerHeight == 0) {
-      calculateContainerHeight();
-    }
-  });
+  //   if (containerHeight == 0) {
+  //     calculateContainerHeight();
+  //   }
+  // });
 
   return (
     <div className="flex flex-row-reverse md:flex-col gap-4 items-center h-32 md:h-full w-full">
-      <div
-        // @ts-ignore bro this works just fine
-        ref={container}
-        className="h-full relative border border-slate-200 bg-white rounded-md w-full select-none"
-      >
-        {renderTimeBlocks(scheduledRanges, "blue", containerHeight)}
-        {renderTimeBlocks(completedRanges, "green", containerHeight)}
-        {renderTimeBlocks(dismissedRanges, "black", containerHeight)}
-        {blocked && renderTimeBlock(blocked, "opaque-gray", containerHeight)}
+      <div className="h-full relative border border-slate-200 bg-white rounded-md w-full select-none">
+        {renderTimeBlocks(scheduledRanges, "blue")}
+        {renderTimeBlocks(completedRanges, "green")}
+        {renderTimeBlocks(dismissedRanges, "black")}
+        {blocked && renderTimeBlock(blocked, "blocked")}
         {cursor && (
           <>
             <div
-              className="absolute w-full bg-red-500 z-10"
+              className="absolute w-full bg-purple-500 z-10"
               style={{
                 height: 4,
-                bottom: (cursor.position / MAX_RANGE) * containerHeight,
+                bottom: `${(cursor.position / MAX_RANGE) * 100}%`,
               }}
             ></div>
             <div
-              className="absolute w-full text-sm text-center text-red-500"
+              className="
+              absolute left-1/2 transform -translate-x-1/2 text-sm text-center text-white
+              bg-purple-500 px-2 py-1 rounded-full shadow-md font-bold
+              hover:scale-105
+              transition-all cursor-pointer"
               style={{
-                bottom: (cursor.position / MAX_RANGE) * containerHeight + 4,
+                bottom: `calc(${(cursor.position / MAX_RANGE) * 100}% + .5rem)`,
               }}
             >
               {cursor.text}
