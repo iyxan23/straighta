@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useEffect, useMemo, useRef } from "react";
 
 export type Range = [number, number];
 
@@ -14,16 +13,16 @@ function renderTimeBlock([from, to]: Range, color: TimeBlockColor) {
     <div
       key={`${from}${to}`}
       className={`
-          ${color == "blue" && "bg-sky-500"}
-          ${color == "green" && "bg-green-500"}
-          ${color == "black" && "bg-slate-500"}
-          ${color == "blocked" && "bg-purple-300 opacity-50"}
+          ${color == "blue" && "bg-sky-500 hover:ring-sky-200 z-20"}
+          ${color == "green" && "bg-green-500 hover:ring-green-200 z-20"}
+          ${color == "black" && "bg-slate-500 hover:ring-slate-200 z-20"}
+          ${color == "blocked" && "bg-purple-300 opacity-50 z-10"}
           w-full absolute text-white text-sm
           flex justify-center
           items-center text-opacity-75
           ${
             color != "blocked" &&
-            "hover:scale-105 hover:ring hover:ring-sky-200 hover:shadow-md cursor-pointer"
+            "hover:scale-105 hover:ring hover:shadow-md cursor-pointer"
           }
           transition-all rounded-sm`}
       style={{
@@ -87,7 +86,16 @@ export default function ScheduleItem({
         {cursor && (
           <>
             <div
-              className="absolute w-full bg-purple-500 z-10"
+              className="
+                absolute w-full bg-purple-500 z-10
+
+                before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0
+                before:transform before:-translate-y-[2px] before:-translate-x-1/2 before:w-2 before:h-2
+                before:rounded-full before:bg-purple-500
+
+                after:content-[''] after:absolute after:right-0 after:top-0 after:bottom-0
+                after:transform after:-translate-y-[2px] after:translate-x-1/2 after:w-2 after:h-2
+                after:rounded-full after:bg-purple-500"
               style={{
                 height: 4,
                 bottom: `${(cursor.position / MAX_RANGE) * 100}%`,

@@ -1,10 +1,5 @@
 import { CustomCard } from "@/components";
-import ScheduleItem from "./ScheduleItem";
-
-function sec(time: `${number}:${number}`) {
-  const [hours, minutes] = time.split(":", 2).map((s) => Number(s));
-  return minutes * 60 + hours * 60 * 60;
-}
+import Schedule from "./Schedule";
 
 export default function DashbardMainPage() {
   return (
@@ -12,17 +7,7 @@ export default function DashbardMainPage() {
       <div className="flex flex-col gap-4 w-full bg-white p-8 md:rounded-r-3xl shadow-lg md:max-h-full">
         <h2 className="font-bold text-2xl text-slate-700">Jadwal</h2>
         <div className="flex flex-col md:flex-row h-auto md:h-full w-full gap-2">
-          {Array.from({ length: 7 }).map((_, index) => (
-            <ScheduleItem
-              weekday={"Kamis"}
-              scheduledRanges={[[sec("16:00"), sec("20:15")]]}
-              completedRanges={[[sec("06:30"), sec("09:00")]]}
-              dismissedRanges={[[sec("10:30"), sec("14:00")]]}
-              cursor={{ position: sec("10:00"), text: "10:00" }}
-              blocked={[sec("00:00"), sec("10:00")]}
-              key={index}
-            />
-          ))}
+          <Schedule />
         </div>
       </div>
       <div className="md:w-80 lg:w-1/3 p-8 h-full md:overflow-y-scroll max-h-full">
