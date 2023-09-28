@@ -13,9 +13,9 @@ function renderTimeBlock([from, to]: Range, color: TimeBlockColor) {
     <div
       key={`${from}${to}`}
       className={`
-          ${color == "blue" && "bg-sky-500 hover:ring-sky-200 z-20"}
-          ${color == "green" && "bg-green-500 hover:ring-green-200 z-20"}
-          ${color == "black" && "bg-slate-500 hover:ring-slate-200 z-20"}
+          ${color == "blue" && "bg-sky-500 hover:ring-sky-200"}
+          ${color == "green" && "bg-green-500 hover:ring-green-200"}
+          ${color == "black" && "bg-slate-500 hover:ring-slate-200"}
           ${color == "blocked" && "bg-purple-300 opacity-50 z-10"}
           w-full absolute text-white text-sm
           flex justify-center
@@ -87,7 +87,7 @@ export default function ScheduleItem({
           <>
             <div
               className="
-                absolute w-full bg-purple-500 z-10
+                absolute w-full bg-purple-500 z-30
 
                 before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0
                 before:transform before:-translate-y-[2px] before:-translate-x-1/2 before:w-2 before:h-2

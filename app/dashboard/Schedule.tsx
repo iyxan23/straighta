@@ -91,13 +91,25 @@ export default function Schedule() {
   return (
     <>
       {schedule.map((s, index) => {
-        const seconds = timeMs / 1000;
         const nowTime = new Date(timeMs);
+        const seconds = timeMs / 1000 - nowTime.getTimezoneOffset() * 60;
         const dayOfTheWeek = nowTime.getUTCDay();
 
         const completedSchedules = s.scheduled.filter((t) =>
           s.completed.includes(t.text)
         );
+
+        function isScheduleDismissed(
+          block: TimeBlock,
+          dayOfTheWeek: number,
+          timeBlockDayOfTheWeek: number
+        ): boolean {
+          const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
+          const secsFromMonday = dayOfTheWeek * SECONDS_IN_ONE_DAY;
+          const secsFromTimeBlock = timeBlockDayOfTheWeek * SECONDS_IN_ONE_DAY;
+
+          return secsFromTimeBlock + block.range[1] < secsFromMonday + seconds;
+        }
 
         return (
           <ScheduleItem
@@ -107,9 +119,8 @@ export default function Schedule() {
             dismissedRanges={s.scheduled
               .filter(
                 (t) =>
-                  !completedSchedules.includes(
-                    t
-                  ) /* todo: list schedules that is before now */
+                  !completedSchedules.includes(t) &&
+                  isScheduleDismissed(t, dayOfTheWeek, index)
               )
               .map((s) => s.range)}
             cursor={
@@ -126,11 +137,9 @@ export default function Schedule() {
             }
             blocked={
               dayOfTheWeek == index
-                ? [sec("00:00"), timeMs / 1000]
+                ? [sec("00:00"), seconds]
                 : dayOfTheWeek > index
-                ? dayOfTheWeek < index
-                  ? [sec("00:00"), sec("24:00")]
-                  : [sec("00:00"), sec("24:00")]
+                ? [sec("00:00"), sec("24:00")]
                 : undefined
             }
             key={index}
