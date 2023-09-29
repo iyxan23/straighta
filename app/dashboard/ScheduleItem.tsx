@@ -3,12 +3,13 @@
 import React from "react";
 
 export type Range = [number, number];
+export type TimeBlock = { text: string; range: Range };
 
 const MAX_RANGE = 86400; // seconds in a day
 
 type TimeBlockColor = "blue" | "green" | "black" | "blocked";
 
-function renderTimeBlock([from, to]: Range, color: TimeBlockColor) {
+function renderRange([from, to]: Range, color: TimeBlockColor, text?: string) {
   return (
     <div
       key={`${from}${to}`}
@@ -18,8 +19,10 @@ function renderTimeBlock([from, to]: Range, color: TimeBlockColor) {
           ${color == "black" && "bg-slate-500 hover:ring-slate-200"}
           ${color == "blocked" && "bg-purple-300 opacity-50 z-10"}
           w-full absolute text-white text-sm
-          flex justify-center
+          flex flex-col justify-center
           items-center text-opacity-75
+          text-center
+          leading-4
           ${
             color != "blocked" &&
             "hover:scale-105 hover:ring hover:shadow-md cursor-pointer"
@@ -30,13 +33,19 @@ function renderTimeBlock([from, to]: Range, color: TimeBlockColor) {
         bottom: `${(from / MAX_RANGE) * 100}%`,
       }}
     >
-      {color != "blocked" && "Hello world"}
+      {color != "blocked" && text}
     </div>
   );
 }
 
-function renderTimeBlocks(ranges: Range[], color: TimeBlockColor) {
-  return <>{ranges.map((range) => renderTimeBlock(range, color))}</>;
+function renderTimeBlock({ text, range }: TimeBlock, color: TimeBlockColor) {
+  return renderRange(range, color, text);
+}
+
+function renderTimeBlocks(timeBlocks: TimeBlock[], color: TimeBlockColor) {
+  return (
+    <>{timeBlocks.map((timeBlock) => renderTimeBlock(timeBlock, color))}</>
+  );
 }
 
 // A schedule item ranges from 0 - 86.400 (seconds)
@@ -50,9 +59,9 @@ export default function ScheduleItem({
   cursor,
 }: {
   weekday: string;
-  scheduledRanges: Range[]; // blue, in seconds
-  completedRanges: Range[]; // green, in seconds
-  dismissedRanges: Range[]; // black, in seconds
+  scheduledRanges: TimeBlock[]; // blue, in seconds
+  completedRanges: TimeBlock[]; // green, in seconds
+  dismissedRanges: TimeBlock[]; // black, in seconds
   blocked?: Range;
   cursor?: {
     position: number;
@@ -82,7 +91,7 @@ export default function ScheduleItem({
         {renderTimeBlocks(scheduledRanges, "blue")}
         {renderTimeBlocks(completedRanges, "green")}
         {renderTimeBlocks(dismissedRanges, "black")}
-        {blocked && renderTimeBlock(blocked, "blocked")}
+        {blocked && renderRange(blocked, "blocked")}
         {cursor && (
           <>
             <div

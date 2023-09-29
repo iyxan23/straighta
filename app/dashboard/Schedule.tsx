@@ -2,15 +2,13 @@
 
 import { TimeoutId } from "@reduxjs/toolkit/dist/query/core/buildMiddleware/types";
 import React, { useEffect } from "react";
-import ScheduleItem from "./ScheduleItem";
+import ScheduleItem, { TimeBlock } from "./ScheduleItem";
 
 function sec(time: `${number}:${number}`) {
   const [hours, minutes] = time.split(":", 2).map((s) => Number(s));
   return minutes * 60 + hours * 60 * 60;
 }
 
-type Range = [number, number];
-type TimeBlock = { text: string; range: Range };
 type DaySchedule = { scheduled: TimeBlock[]; completed: string[] };
 type Schedule = [
   DaySchedule,
@@ -114,15 +112,13 @@ export default function Schedule() {
         return (
           <ScheduleItem
             weekday={weekdays[index]}
-            scheduledRanges={s.scheduled.map((s) => s.range)}
-            completedRanges={completedSchedules.map((t) => t.range)}
-            dismissedRanges={s.scheduled
-              .filter(
-                (t) =>
-                  !completedSchedules.includes(t) &&
-                  isScheduleDismissed(t, dayOfTheWeek, index)
-              )
-              .map((s) => s.range)}
+            scheduledRanges={s.scheduled}
+            completedRanges={completedSchedules}
+            dismissedRanges={s.scheduled.filter(
+              (t) =>
+                !completedSchedules.includes(t) &&
+                isScheduleDismissed(t, dayOfTheWeek, index)
+            )}
             cursor={
               dayOfTheWeek == index
                 ? {
