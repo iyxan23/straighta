@@ -2,14 +2,18 @@
 
 import CallbackButton from "@/components/CallbackButton";
 import { openNewSubjectModal } from "@/redux/features/newSubjectModalSlice";
+import { openStartStudyModal } from "@/redux/features/startStudyModalSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { AppDispatch } from "@/redux/store";
 import { usePathname } from "next/navigation";
-import LinkButton from "../../components/LinkButton";
 
 const data: Record<string, (dispatch: AppDispatch) => JSX.Element> = {
-  "/dashboard": () => (
-    <CallbackButton text="Belajar" size="lg" onClick={() => {}} />
+  "/dashboard": (dispatch) => (
+    <CallbackButton
+      text="Belajar"
+      size="lg"
+      onClick={() => dispatch(openStartStudyModal())}
+    />
   ),
   "/dashboard/subject": (dispatch) => (
     <>

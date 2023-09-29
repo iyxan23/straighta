@@ -13,7 +13,7 @@ const initialState = {
 } as NewSubjectModalState;
 
 export const counter = createSlice({
-  name: "newSubjectModalVisibility",
+  name: "newSubjectModal",
   initialState,
   reducers: {
     reset: () => initialState,

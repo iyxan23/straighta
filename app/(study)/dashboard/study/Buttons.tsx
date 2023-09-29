@@ -1,9 +1,11 @@
 "use client";
 
 import CallbackButton from "@/components/CallbackButton";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 
 export default function Buttons() {
+  const currentAgenda = useAppSelector((state) => state.study.currentAgenda)!;
   const router = useRouter();
 
   return (
@@ -16,7 +18,7 @@ export default function Buttons() {
       />
       <CallbackButton
         className="bg-white text-sky-500"
-        text="Istirahat"
+        text={currentAgenda == "study" ? "Istirahat" : "Lanjut Belajar"}
         size="lg"
         onClick={() => console.log("esteerahaat")}
       />
