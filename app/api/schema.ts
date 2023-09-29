@@ -120,19 +120,23 @@ export const materialListGetRequest = z.object({
     .max(100, "limit memiliki maksimum 100"),
   offset: z.coerce.number().min(0, "offset tidak boleh kurang dari 0"),
 });
-export const materialListGetResponse = responseResultSchema(
-  z.array(
-    z.object({
-      id: z.number(),
-      title: z.string(),
-      overallScore: z.number(),
-      subjectId: z.number(),
-    })
-  )
+export const materialListGetResponse = z.array(
+  z.object({
+    id: z.number(),
+    title: z.string(),
+    overallScore: z.number(),
+    subjectId: z.number(),
+  })
+);
+export const materialListGetResponseResult = responseResultSchema(
+  materialListGetResponse
 );
 
 export type MaterialListGetRequest = z.infer<typeof materialListGetRequest>;
 export type MaterialListGetResponse = z.infer<typeof materialListGetResponse>;
+export type MaterialListGetResponseResult = z.infer<
+  typeof materialListGetResponseResult
+>;
 
 // /api/study/new
 export const studyNewPostRequest = z.object({
@@ -161,3 +165,27 @@ export const studyEndPostResponse = responseResultSchema(
 
 export type StudyEndPostRequest = z.infer<typeof studyEndPostRequest>;
 export type StudyEndPostResponse = z.infer<typeof studyEndPostResponse>;
+
+export const studyListGetRequest = z.object({
+  limit: z.coerce.number().min(1).max(100),
+  offset: z.coerce.number().min(0),
+});
+export const studyListGetResponse = z.array(
+  z.object({
+    id: z.number(),
+    timestamp: z.object({
+      start: z.number(),
+      end: z.optional(z.number()),
+    }),
+    materialId: z.number(),
+  })
+);
+
+export const studyListGetResponseResult =
+  responseResultSchema(studyListGetResponse);
+
+export type StudyListGetRequest = z.infer<typeof studyListGetRequest>;
+export type StudyListGetResponse = z.infer<typeof studyListGetResponse>;
+export type StudyListGetResponseResult = z.infer<
+  typeof studyListGetResponseResult
+>;

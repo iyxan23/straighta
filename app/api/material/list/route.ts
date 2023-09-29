@@ -1,6 +1,6 @@
 import {
   materialListGetRequest,
-  type MaterialListGetResponse,
+  type MaterialListGetResponseResult,
 } from "../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +9,7 @@ import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<MaterialListGetResponse>> {
+): Promise<NextResponse<MaterialListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const data = searchParamsToObject(req.nextUrl.searchParams);
 

@@ -1,7 +1,7 @@
 import { materialGetRequest, MaterialGetResponseResult } from "./../schema";
 import {
   materialListGetRequest,
-  type MaterialListGetResponse,
+  type MaterialListGetResponseResult,
 } from "../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
@@ -34,8 +34,8 @@ export async function GET(
   if (!material) {
     return NextResponse.json({
       status: "err",
-      reason: `No such material with id ${id} exists`
-    })
+      reason: `No such material with id ${id} exists`,
+    });
   }
 
   return NextResponse.json({
