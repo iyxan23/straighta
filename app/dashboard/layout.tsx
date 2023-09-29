@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import React from "react";
 import Navigation from "../../components/client/Navigation";
 import BottomButtonsBar from "./BottomButtonsBar";
+import LogoutButton from "./LogoutButton";
 
 export default function DashboardLayout({
   children,
@@ -21,6 +22,7 @@ export default function DashboardLayout({
             <strong>{username}</strong>
             <p className="opacity-50 text-sm">PELAJAR</p>
           </div>
+          <LogoutButton />
         </div>
         <div className="absolute max-md:bottom-2 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <BottomButtonsBar />
