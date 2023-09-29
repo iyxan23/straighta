@@ -1,17 +1,17 @@
 import CustomCard from '@/components/CustomCard';
 // import SubjectItemMaterials from "./SubjectItemMaterials";
 
-const materialList = [
-  'Peningkatan Keterampilan Menulis Teks Berita',
-  'Peningkatan Kemampuan Menyimak Puisi',
-  'Peningkatan Kemampuan Menulis Cerpen',
-  'Peningkatan Kemampuan Menulis Karangan Deskripsi',
-  'Peningkatan Kemampuan Menulis Karangan Argumentasi',
-  'Peningkatan Kemampuan Menulis Karangan Narasi',
-  'Peningkatan Kemampuan Menulis Karangan Eksposisi',
-  'Peningkatan Kemampuan Menulis Surat Resmi',
-  'Peningkatan Kemampuan Menulis Surat Pribadi',
-  'Peningkatan Kemampuan Menulis Teks Drama',
+export const materialList = [
+  'Menyimak Puisi',
+  'Menulis Teks Berita',
+  'Menulis Cerpen',
+  'Menulis Karangan Deskripsi',
+  'Menulis Karangan Argumentasi',
+  'Menulis Karangan Narasi',
+  'Menulis Karangan Eksposisi',
+  'Menulis Surat Resmi',
+  'Menulis Surat Pribadi',
+  'Menulis Teks Drama',
 ];
 
 export default function SubjectItem({
