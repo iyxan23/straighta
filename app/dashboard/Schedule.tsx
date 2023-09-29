@@ -78,7 +78,7 @@ export default function Schedule() {
   useEffect(() => {
     const id = setInterval(() => {
       const msSinceMidnight =
-        new Date().valueOf() - new Date().setUTCHours(0, 0, 0, 0).valueOf();
+        new Date().getTime() - new Date().setUTCHours(0, 0, 0, 0);
 
       setTimeMs(msSinceMidnight);
     }, 100);

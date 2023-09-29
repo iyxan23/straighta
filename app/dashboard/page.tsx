@@ -1,5 +1,5 @@
-import { CustomCard } from "@/components";
 import Schedule from "./Schedule";
+import StudyHistory from "./StudyHistory";
 
 export default function DashbardMainPage() {
   return (
@@ -13,9 +13,7 @@ export default function DashbardMainPage() {
       <div className="md:w-80 lg:w-1/3 p-8 h-full md:overflow-y-scroll max-h-full">
         <h2 className="font-bold text-2xl text-slate-700 mb-4">Riwayat</h2>
         <div className="flex flex-col w-full gap-4">
-          {Array.from({ length: 17 }).map((_, index) => (
-            <CustomCard key={index} className="h-36" hoverable />
-          ))}
+          <StudyHistory />
         </div>
       </div>
     </div>

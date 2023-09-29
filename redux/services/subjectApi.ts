@@ -4,6 +4,7 @@ import {
   SubjectPostRequest,
   SubjectPostResponse,
   subjectPostResponseResult,
+  SubjectGetRequest,
   subjectGetResponse,
   SubjectGetResponse,
   SubjectListGetRequest,
@@ -20,8 +21,16 @@ export const subjectApi = createApi({
   }),
   tagTypes: ["subject"],
   endpoints: (builder) => ({
-    getSubjectById: builder.query<SubjectGetResponse, void>({
-      query: () => "",
+    getSubjectById: builder.query<SubjectGetResponse, SubjectGetRequest>({
+      query: (body) => {
+        const params = new URLSearchParams({
+          id: body.id.toString(),
+        });
+        return {
+          url: `?${params}`,
+        };
+      },
+      serializeQueryArgs: ({ queryArgs }) => queryArgs.id,
       transformResponse: async (resp) => {
         try {
           return await subjectGetResponse.parseAsync(resp);

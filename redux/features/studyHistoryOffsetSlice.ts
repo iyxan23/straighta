@@ -1,19 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type SubjectOffsetState = {
+type StudyHistoryOffsetState = {
   offset: number;
 };
 
 const initialState = {
   offset: 0,
-} as SubjectOffsetState;
+} as StudyHistoryOffsetState;
 
 export const counter = createSlice({
-  name: "subjectOffset",
+  name: "studyHistoryOffset",
   initialState,
   reducers: {
     reset: () => initialState,
-    addOffset: (state: SubjectOffsetState, action: PayloadAction<number>) => {
+    addOffset: (state: StudyHistoryOffsetState, action: PayloadAction<number>) => {
       state.offset += action.payload;
     },
   },
