@@ -13,6 +13,7 @@ import { searchParamsToObject } from "@/lib/utils";
 export async function GET(
   req: NextRequest
 ): Promise<NextResponse<SubjectGetResponse>> {
+  const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await searchParamsToObject(req.nextUrl.searchParams);
   const data = await subjectGetRequest.safeParseAsync(payload);
 
@@ -30,6 +31,7 @@ export async function GET(
   const subject = await prisma.subject.findFirst({
     where: {
       id,
+      owner_username: username,
     },
     include: {
       materials: {

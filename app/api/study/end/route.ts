@@ -26,7 +26,7 @@ export async function POST(
   // this is much better if there would be a postgresql constraint
   // but we're using prisma here
   const studySession = await prisma.studySession.findFirst({
-    where: { id: studySessionId },
+    where: { id: studySessionId, username, },
   });
 
   if (!studySession) {
