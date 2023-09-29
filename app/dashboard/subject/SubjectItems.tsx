@@ -23,6 +23,10 @@ export default function SubjectItems(): JSX.Element {
     fetchMore({ limit: LIMIT, offset: offset });
   }, [fetchMore, offset]);
 
+  if (error) {
+    return <>Err: {JSON.stringify(error)}</>;
+  }
+
   if (data) {
     if (data.length == 0) {
       return (
@@ -48,19 +52,14 @@ export default function SubjectItems(): JSX.Element {
         {!moreData && (
           <button
             onClick={() => {
-              console.log("dispatching adding offset");
               dispatch(addOffset(LIMIT));
             }}
           >
-            More
+            Muat lebih
           </button>
         )}
       </>
     );
-  }
-
-  if (error) {
-    return <>Err: {JSON.stringify(error)}</>;
   }
 
   return <>Loading...</>;
