@@ -23,7 +23,7 @@ export default function DashboardMainPage() {
                   key={index}
                   className="flex justify-between items-center gap-2"
                 >
-                  <CustomCard className="p-4">
+                  <CustomCard className="p-4" hoverable>
                     <div>
                       <h4 className="font-bold text-slate-700">{item}</h4>
                       <p className="text-sm text-slate-400">Bahasa Indonesia</p>

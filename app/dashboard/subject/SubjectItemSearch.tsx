@@ -12,7 +12,7 @@ export default function SubjectItemSearch({
   query: string;
 }): JSX.Element {
   return (
-    <CustomForm>
+    <CustomForm className="md:w-1/3 flex flex-row items-center border rounded-full border-slate-200">
       <input
         type="text"
         className="py-2 px-4 rounded-l-full w-full focus:outline-none focus:ring focus:ring-sky-200"
