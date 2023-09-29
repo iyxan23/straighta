@@ -92,8 +92,27 @@ export type SubjectListGetResponseResult = z.infer<
   typeof subjectListGetResponseResult
 >;
 
-// /api/materials
-export const materialsGetRequest = z.object({
+// /api/material
+export const materialGetRequest = z.object({
+  id: z.number(),
+});
+export const materialGetResponse = z.object({
+  id: z.number(),
+  title: z.string(),
+  overallScore: z.number(),
+  subjectId: z.number(),
+});
+export const materialGetResponseResult =
+  responseResultSchema(materialGetResponse);
+
+export type MaterialGetRequest = z.infer<typeof materialGetRequest>;
+export type MaterialGetResponse = z.infer<typeof materialGetResponse>;
+export type MaterialGetResponseResult = z.infer<
+  typeof materialGetResponseResult
+>;
+
+// /api/material/list
+export const materialListGetRequest = z.object({
   subjectId: z.coerce.number(),
   limit: z.coerce
     .number()
@@ -101,14 +120,19 @@ export const materialsGetRequest = z.object({
     .max(100, "limit memiliki maksimum 100"),
   offset: z.coerce.number().min(0, "offset tidak boleh kurang dari 0"),
 });
-export const materialsGetResponse = responseResultSchema(
+export const materialListGetResponse = responseResultSchema(
   z.array(
-    z.object({ id: z.number(), title: z.string(), overallScore: z.number() })
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      overallScore: z.number(),
+      subjectId: z.number(),
+    })
   )
 );
 
-export type MaterialsGetRequest = z.infer<typeof materialsGetRequest>;
-export type MaterialsGetResponse = z.infer<typeof materialsGetResponse>;
+export type MaterialListGetRequest = z.infer<typeof materialListGetRequest>;
+export type MaterialListGetResponse = z.infer<typeof materialListGetResponse>;
 
 // /api/study/new
 export const studyNewPostRequest = z.object({

@@ -1,7 +1,7 @@
 import {
-  materialsGetRequest,
-  type MaterialsGetResponse,
-} from "./../schema";
+  materialListGetRequest,
+  type MaterialListGetResponse,
+} from "../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
@@ -9,11 +9,11 @@ import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<MaterialsGetResponse>> {
+): Promise<NextResponse<MaterialListGetResponse>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const data = searchParamsToObject(req.nextUrl.searchParams);
 
-  const result = await materialsGetRequest.safeParseAsync(data);
+  const result = await materialListGetRequest.safeParseAsync(data);
   if (!result.success) {
     return NextResponse.json({
       status: "err",
@@ -38,6 +38,7 @@ export async function GET(
       id: m.id,
       title: m.title,
       overallScore: 1, // todo
+      subjectId: m.subject_id,
     })),
   });
 }

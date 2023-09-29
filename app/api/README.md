@@ -125,7 +125,24 @@ type Response = ResponseResult<
 >;
 ```
 
-### `[🛡️]` `/api/materials`
+### `[🛡️]` `/api/material`
+
+#### `GET`
+
+```typescript
+type Request = {
+  id: number;
+};
+
+type Response = ResponseResult<{
+  id: number;
+  title: string;
+  overallScore: number; // an overall score of the user's knowledge about this material
+  subjectId: number;
+}>;
+```
+
+### `[🛡️]` `/api/material/list`
 
 #### `GET`
 
@@ -141,6 +158,7 @@ type Response = ResponseResult<
     id: number;
     title: string;
     overallScore: number; // an overall score of the user's knowledge about this material
+    subjectId: number;
   }[]
 >;
 ```
@@ -184,4 +202,24 @@ type Request = {
 };
 
 type Response = ResponseResult<{}>; // no payload
+```
+
+### `[🛡️]` `/api/study/list`
+
+#### `GET`
+
+```typescript
+type Request = {
+  limit: number;
+  offset: number;
+};
+
+type Response = ResponseResult<
+  {
+    from: number; // date in timestamp
+    to: number; // date in timestamp
+    materialId: number;
+    // todo: growth etc
+  }[]
+>;
 ```
