@@ -2,6 +2,7 @@ import DashboardAnimatePresence from "./DashboardAnimatePresence";
 import { CustomCard } from "@/components";
 import Schedule from "./Schedule";
 import { materialList } from "./subject/SubjectItem";
+import StudyModal from "./StudyModal";
 
 export default function DashboardMainPage() {
   return (
@@ -40,6 +41,7 @@ export default function DashboardMainPage() {
           </div>
         </div>
       </div>
+      <StudyModal />
     </DashboardAnimatePresence>
   );
 }
