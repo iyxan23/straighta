@@ -70,7 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     value: token,
     path: "/",
     httpOnly: true,
-    secure: true,
+    // secure: true,
   });
 
   return response;
