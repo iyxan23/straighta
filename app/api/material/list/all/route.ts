@@ -1,8 +1,7 @@
 import {
-  subjectListGetRequest,
-  type SubjectListGetResponseResult,
-  subjectListGetResponseResult,
-} from "./../../schema";
+  materialListAllGetRequest,
+  type MaterialListGetResponseResult,
+} from "../../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
@@ -10,11 +9,11 @@ import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<SubjectListGetResponseResult>> {
+): Promise<NextResponse<MaterialListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const data = searchParamsToObject(req.nextUrl.searchParams);
 
-  const result = await subjectListGetRequest.safeParseAsync(data);
+  const result = await materialListAllGetRequest.safeParseAsync(data);
   if (!result.success) {
     return NextResponse.json({
       status: "err",
@@ -24,7 +23,7 @@ export async function GET(
 
   const { limit, offset } = result.data;
 
-  const subjects = await prisma.subject.findMany({
+  const materials = await prisma.material.findMany({
     skip: offset,
     take: limit,
     where: {
@@ -34,12 +33,11 @@ export async function GET(
 
   return NextResponse.json({
     status: "ok",
-    payload: subjects.map((s) => {
-      return {
-        id: s.id,
-        title: s.title,
-        overallScore: 89, // todo
-      };
-    }),
+    payload: materials.map((m) => ({
+      id: m.id,
+      title: m.title,
+      overallScore: 89, // todo
+      subjectId: m.subject_id,
+    })),
   });
 }

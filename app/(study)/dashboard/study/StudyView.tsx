@@ -1,7 +1,8 @@
+"use client";
+
 import { useAppSelector } from "@/redux/hooks";
 import { useGetMaterialByIdQuery } from "@/redux/services/materialApi";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import Buttons from "./Buttons";
 import Timer from "./Timer";
 
@@ -45,5 +46,9 @@ export default function StudyView() {
     );
   }
 
-  return <p className="animate-pulse text-white font-bold w-full">Loading</p>;
+  return (
+    <p className="animate-pulse text-white font-bold w-full text-center">
+      Loading
+    </p>
+  );
 }

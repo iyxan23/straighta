@@ -94,7 +94,7 @@ export type SubjectListGetResponseResult = z.infer<
 
 // /api/material
 export const materialGetRequest = z.object({
-  id: z.number(),
+  id: z.coerce.number(),
 });
 export const materialGetResponse = z.object({
   id: z.number(),
@@ -136,6 +136,36 @@ export type MaterialListGetRequest = z.infer<typeof materialListGetRequest>;
 export type MaterialListGetResponse = z.infer<typeof materialListGetResponse>;
 export type MaterialListGetResponseResult = z.infer<
   typeof materialListGetResponseResult
+>;
+
+// /api/material/list/all
+export const materialListAllGetRequest = z.object({
+  limit: z.coerce
+    .number()
+    .min(1, "limit setidaknya berisi 1")
+    .max(100, "limit memiliki maksimum 100"),
+  offset: z.coerce.number().min(0, "offset tidak boleh kurang dari 0"),
+});
+export const materialListAllGetResponse = z.array(
+  z.object({
+    id: z.number(),
+    title: z.string(),
+    overallScore: z.number(),
+    subjectId: z.number(),
+  })
+);
+export const materialListAllGetResponseResult = responseResultSchema(
+  materialListAllGetResponse
+);
+
+export type MaterialListAllGetRequest = z.infer<
+  typeof materialListAllGetRequest
+>;
+export type MaterialListAllGetResponse = z.infer<
+  typeof materialListAllGetResponse
+>;
+export type MaterialListAllGetResponseResult = z.infer<
+  typeof materialListAllGetResponseResult
 >;
 
 // /api/study/new

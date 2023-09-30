@@ -21,6 +21,7 @@ type StudyState = {
 
 const initialState = {
   studying: false,
+  studyItems: [],
 } as StudyState;
 
 export const study = createSlice({
@@ -70,11 +71,13 @@ export const study = createSlice({
       state.focusMaterialId = payload.payload.materialId;
       state.start = payload.payload.startDate.getTime();
       state.currentAgenda = "study";
+      state.studyItems = [];
     },
     endStudySession: (state: StudyState) => {
       state.studying = false;
       state.focusMaterialId = undefined;
       state.start = undefined;
+      state.studyItems = [];
     },
   },
 });
