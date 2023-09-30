@@ -173,12 +173,15 @@ export const studyNewPostRequest = z.object({
   materialId: z.coerce.number(),
   score: z.coerce.number(),
 });
-export const studyNewPostResponse = responseResultSchema(
-  z.object({ id: z.number() })
-);
+export const studyNewPostResponse = z.object({ id: z.number() });
+export const studyNewPostResponseResult =
+  responseResultSchema(studyNewPostResponse);
 
 export type StudyNewPostRequest = z.infer<typeof studyNewPostRequest>;
 export type StudyNewPostResponse = z.infer<typeof studyNewPostResponse>;
+export type StudyNewPostResponseResult = z.infer<
+  typeof studyNewPostResponseResult
+>;
 
 // /api/study/end
 export const studyEndPostRequest = z.object({
@@ -189,12 +192,15 @@ export const studyEndPostRequest = z.object({
   }),
   score: z.coerce.number(),
 });
-export const studyEndPostResponse = responseResultSchema(
-  z.object({ id: z.number() })
-);
+export const studyEndPostResponse = z.object({ id: z.number() });
+export const studyEndPostResponseResult =
+  responseResultSchema(studyEndPostResponse);
 
 export type StudyEndPostRequest = z.infer<typeof studyEndPostRequest>;
 export type StudyEndPostResponse = z.infer<typeof studyEndPostResponse>;
+export type StudyEndPostResponseResult = z.infer<
+  typeof studyEndPostResponseResult
+>;
 
 export const studyListGetRequest = z.object({
   limit: z.coerce.number().min(1).max(100),

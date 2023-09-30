@@ -1,4 +1,7 @@
-import { studyEndPostRequest, StudyEndPostResponse } from "./../../schema";
+import {
+  studyEndPostRequest,
+  StudyEndPostResponseResult,
+} from "./../../schema";
 import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
@@ -7,7 +10,7 @@ const TOLERANCE = 10; // in seconds
 
 export async function POST(
   req: NextRequest
-): Promise<NextResponse<StudyEndPostResponse>> {
+): Promise<NextResponse<StudyEndPostResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const data = await studyEndPostRequest.safeParseAsync(await req.json());
   if (!data.success) {
@@ -26,7 +29,7 @@ export async function POST(
   // this is much better if there would be a postgresql constraint
   // but we're using prisma here
   const studySession = await prisma.studySession.findFirst({
-    where: { id: studySessionId, username, },
+    where: { id: studySessionId, username },
   });
 
   if (!studySession) {

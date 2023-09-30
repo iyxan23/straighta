@@ -2,9 +2,16 @@
 
 import { StudySession } from "./../../lib/types";
 import {
+  StudyEndPostRequest,
+  StudyEndPostResponse,
+  studyEndPostResponseResult,
+  StudyEndPostResponseResult,
   StudyListGetRequest,
   StudyListGetResponse,
   studyListGetResponseResult,
+  StudyNewPostRequest,
+  StudyNewPostResponse,
+  studyNewPostResponseResult,
 } from "./../../app/api/schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -64,8 +71,53 @@ export const studyApi = createApi({
             : [{ type: "study", id: "LIST" }],
       }
     ),
+    createStudySession: builder.mutation<
+      StudyNewPostResponse,
+      StudyNewPostRequest
+    >({
+      query: (body) => ({ url: "new", body: JSON.stringify(body) }),
+      transformResponse: async (resp) => {
+        try {
+          const result = await studyNewPostResponseResult.parseAsync(resp);
+          if (result.status === "err") {
+            throw new Error(result.reason);
+          }
+          return result.payload;
+        } catch (e) {
+          console.error(`Server sent an invalid response of /api/study/new:`);
+          console.error(e);
+          throw e;
+        }
+      },
+      invalidatesTags: [{ type: "study", id: "LIST" }],
+    }),
+    endStudySession: builder.mutation<
+      StudyEndPostResponse,
+      StudyEndPostRequest
+    >({
+      query: (body) => ({ url: "new", body: JSON.stringify(body) }),
+      transformResponse: async (resp) => {
+        try {
+          const result = await studyEndPostResponseResult.parseAsync(resp);
+          if (result.status === "err") {
+            throw new Error(result.reason);
+          }
+          return result.payload;
+        } catch (e) {
+          console.error(`Server sent an invalid response of /api/study/new:`);
+          console.error(e);
+          throw e;
+        }
+      },
+      invalidatesTags: [{ type: "study", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useListStudySessionsQuery, useLazyListStudySessionsQuery } =
-  studyApi;
+export const {
+  useListStudySessionsQuery,
+  useLazyListStudySessionsQuery,
+
+  useCreateStudySessionMutation,
+  useEndStudySessionMutation,
+} = studyApi;
