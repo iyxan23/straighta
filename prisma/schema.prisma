@@ -48,7 +48,7 @@ model Material {
   owner          User   @relation(fields: [owner_username], references: [username])
   owner_username String
 
-  studySessions StudySession[]
+  study_sessions StudySession[]
 
   @@map("material")
 }
