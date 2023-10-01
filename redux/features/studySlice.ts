@@ -5,13 +5,15 @@ type Agenda = "break" | "study";
 
 type StudyItem = {
   agenda: Agenda;
-  end: number;
+  elapsed: number;
 };
 
 type StudyItems = StudyItem[];
 
 type StudyState = {
   studying: boolean;
+
+  studySessionId?: number;
   focusMaterialId?: number;
   start?: number;
 
@@ -31,7 +33,7 @@ export const study = createSlice({
     reset: () => initialState,
     startBreakTime: (
       state: StudyState,
-      payload: PayloadAction<{ endTime: Date }>
+      payload: PayloadAction<{ elapsed: number }>
     ) => {
       if (!state.currentAgenda) {
         throw new Error(
@@ -41,14 +43,17 @@ export const study = createSlice({
 
       state.studyItems = [
         ...state.studyItems,
-        { agenda: state.currentAgenda, end: payload.payload.endTime.getTime() },
+        {
+          agenda: state.currentAgenda,
+          elapsed: payload.payload.elapsed,
+        },
       ];
 
       state.currentAgenda = "break";
     },
     startStudyTime: (
       state: StudyState,
-      payload: PayloadAction<{ endTime: Date }>
+      payload: PayloadAction<{ elapsed: number }>
     ) => {
       if (!state.currentAgenda) {
         throw new Error(
@@ -58,7 +63,7 @@ export const study = createSlice({
 
       state.studyItems = [
         ...state.studyItems,
-        { agenda: state.currentAgenda, end: payload.payload.endTime.getTime() },
+        { agenda: state.currentAgenda, elapsed: payload.payload.elapsed },
       ];
 
       state.currentAgenda = "study";

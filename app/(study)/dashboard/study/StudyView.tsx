@@ -20,16 +20,16 @@ export default function StudyView() {
     replace("/dashboard");
   }
 
-  const { data, error } = useGetMaterialByIdQuery({
+  const { data: materialData, error: materialError } = useGetMaterialByIdQuery({
     id: focusMaterialId!,
   });
 
-  if (error) {
-    console.error(error);
-    return <>Err: {JSON.stringify(error)}</>;
+  if (materialError) {
+    console.error(materialError);
+    return <>Err: {JSON.stringify(materialError)}</>;
   }
 
-  if (data) {
+  if (materialData) {
     return (
       <>
         <div className="flex flex-col gap-4 items-center w-2/3">
@@ -37,7 +37,7 @@ export default function StudyView() {
             Fokus
           </h2>
           <h2 className="text-4xl tracking-tight text-white font-semibold text-center">
-            {data.title}
+            {materialData.title}
           </h2>
         </div>
         <Timer />
