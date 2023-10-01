@@ -15,7 +15,7 @@ export default function Buttons() {
   const studySessionId = useAppSelector((state) => state.study.studySessionId)!;
   const studyItems = useAppSelector((state) => state.study.studyItems)!;
   const elapsed = useAppSelector((state) =>
-    state.study.studyItems.reduce((acc, i) => acc + i.elapsed, 0)
+    state.study.studyItems.reduce((acc, i) => acc + i.elapsed, 0),
   );
   const start = useAppSelector((state) => state.study.start)!;
 
@@ -31,7 +31,7 @@ export default function Buttons() {
   return (
     <div className="flex flex-row gap-4">
       <CallbackButton
-        className="bg-white text-sky-500"
+        className="bg-white text-sky-500 hover:bg-sky-100 active:ring-sky-300 active:bg-sky-200"
         text="Selesai"
         size="lg"
         onClick={() => {
@@ -57,7 +57,7 @@ export default function Buttons() {
         }}
       />
       <CallbackButton
-        className="bg-white text-sky-500"
+        className="bg-white text-sky-500 hover:bg-sky-100 active:ring-sky-300 active:bg-sky-200"
         text={currentAgenda == "study" ? "Istirahat" : "Lanjut Belajar"}
         size="lg"
         onClick={() => {
@@ -65,13 +65,13 @@ export default function Buttons() {
             dispatch(
               startBreakTime({
                 elapsed: new Date().getTime() - (start + elapsed),
-              })
+              }),
             );
           } else {
             dispatch(
               startStudyTime({
                 elapsed: new Date().getTime() - (start + elapsed),
-              })
+              }),
             );
           }
         }}
