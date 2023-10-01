@@ -10,9 +10,10 @@ import {
 import { startStudySession } from "@/redux/features/studySlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useListAllMaterialsQuery } from "@/redux/services/materialApi";
-import { useListSubjectsQuery } from "@/redux/services/subjectApi";
+import { useCreateStudySessionMutation } from "@/redux/services/studyApi";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function StudyModal() {
   const modalOpen = useAppSelector((state) => state.startStudyModal.visible);
@@ -23,6 +24,25 @@ export default function StudyModal() {
   const dispatch = useAppDispatch();
   const { data, error } = useListAllMaterialsQuery({ limit: 99, offset: 0 });
   const { push } = useRouter();
+
+  const [
+    createStudySession,
+    { data: studySessionData, error: studySessionError },
+  ] = useCreateStudySessionMutation();
+
+  useEffect(() => {
+    if (studySessionData && selectedMaterialId && !studySessionError) {
+      dispatch(
+        startStudySession({
+          studySessionId: studySessionData.id,
+          materialId: selectedMaterialId,
+          startDate: new Date(),
+        })
+      );
+      push("/dashboard/study");
+      dispatch(finishStartStudyModal());
+    }
+  }, [studySessionData, dispatch, push, selectedMaterialId, studySessionError]);
 
   return (
     <>
@@ -37,6 +57,8 @@ export default function StudyModal() {
         >
           {error ? (
             <>Error: {error}</>
+          ) : studySessionError ? (
+            <>Error ketika membuat sesi belajar: {error}</>
           ) : (
             <Modal
               content={() => (
@@ -48,10 +70,9 @@ export default function StudyModal() {
                   {data ? (
                     <select
                       onChange={(ev) => {
-                        console.log('changed')
                         dispatch(
                           setStartStudyModalMaterialId(Number(ev.target.value))
-                        )
+                        );
                       }}
                     >
                       {data.map((s) => (
@@ -79,19 +100,13 @@ export default function StudyModal() {
                       size="md"
                       onClick={() => {
                         if (!selectedMaterialId) {
-                          console.log("aint changed");
                           return;
                         }
 
-                        console.log("ok gass");
-                        dispatch(
-                          startStudySession({
-                            materialId: selectedMaterialId,
-                            startDate: new Date(),
-                          })
-                        );
-                        push("/dashboard/study");
-                        dispatch(finishStartStudyModal());
+                        createStudySession({
+                          materialId: selectedMaterialId,
+                          score: 85, // todo: ask the user
+                        });
                       }}
                     />
                   </div>

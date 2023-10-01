@@ -65,9 +65,14 @@ export const study = createSlice({
     },
     startStudySession: (
       state: StudyState,
-      payload: PayloadAction<{ materialId: number; startDate: Date }>
+      payload: PayloadAction<{
+        studySessionId: number;
+        materialId: number;
+        startDate: Date;
+      }>
     ) => {
       state.studying = true;
+      state.studySessionId = payload.payload.studySessionId;
       state.focusMaterialId = payload.payload.materialId;
       state.start = payload.payload.startDate.getTime();
       state.currentAgenda = "study";
