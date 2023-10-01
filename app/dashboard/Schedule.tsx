@@ -20,16 +20,19 @@ type Schedule = [
   DaySchedule,
 ];
 
+// [0] is sunday
 const schedule: Schedule = [
   {
     scheduled: [{ text: "Membaca teks", range: [sec("18:00"), sec("20:00")] }],
-    completed: ["Membaca teks"],
+    // completed: ["Membaca teks"],
+    completed: [],
   },
   {
     scheduled: [
       { text: "Memahami Pertambahan", range: [sec("18:00"), sec("20:00")] },
     ],
-    completed: ["Memahami Pertambahan"],
+    // completed: ["Memahami Pertambahan"],
+    completed: [],
   },
   {
     scheduled: [{ text: "Materi 2", range: [sec("18:00"), sec("20:00")] }],
@@ -61,13 +64,13 @@ const schedule: Schedule = [
 ];
 
 const weekdays = [
+  "Minggu",
   "Senin",
   "Selasa",
   "Rabu",
   "Kamis",
   "Jum'at",
   "Sabtu",
-  "Minggu",
 ];
 
 export default function Schedule() {
@@ -91,7 +94,7 @@ export default function Schedule() {
       {schedule.map((s, index) => {
         const nowTime = new Date(timeMs);
         const seconds = timeMs / 1000 - nowTime.getTimezoneOffset() * 60;
-        const dayOfTheWeek = nowTime.getUTCDay();
+        const dayOfTheWeek = new Date().getUTCDay();
 
         const completedSchedules = s.scheduled.filter((t) =>
           s.completed.includes(t.text)
