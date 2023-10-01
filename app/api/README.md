@@ -204,6 +204,20 @@ type Request = {
 type Response = ResponseResult<{}>; // no payload
 ```
 
+### `[🛡️]` `/api/study/cancel`
+
+Cancels an ongoing study session. Will fail with 404 if a study session has already concluded.
+
+#### `POST`
+
+```typescript
+type Request = {
+  id: number;
+};
+
+type Response = ResponseResult<{ id: number }>; // no payload
+```
+
 ### `[🛡️]` `/api/study/list`
 
 #### `GET`

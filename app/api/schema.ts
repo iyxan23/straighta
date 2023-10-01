@@ -202,6 +202,21 @@ export type StudyEndPostResponseResult = z.infer<
   typeof studyEndPostResponseResult
 >;
 
+// /api/study/cancel
+export const studyCancelPostRequest = z.object({
+  id: z.coerce.number(),
+});
+export const studyCancelPostResponse = z.object({});
+export const studyCancelPostResponseResult = responseResultSchema(
+  studyCancelPostResponse
+);
+
+export type StudyCancelPostRequest = z.infer<typeof studyCancelPostRequest>;
+export type StudyCancelPostResponse = z.infer<typeof studyCancelPostResponse>;
+export type StudyCancelPostResponseResult = z.infer<
+  typeof studyCancelPostResponseResult
+>;
+
 export const studyListGetRequest = z.object({
   limit: z.coerce.number().min(1).max(100),
   offset: z.coerce.number().min(0),
