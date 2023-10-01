@@ -36,9 +36,9 @@ export const subjectGetRequest = z.object({
   id: z.coerce.number(),
 });
 export const subjectGetResponse = z.object({
-    title: z.string(),
-    overallScore: z.number(),
-    materials: z.array(z.number()),
+  title: z.string(),
+  overallScore: z.number(),
+  materials: z.array(z.number()),
 });
 export const subjectGetResponseResult =
   responseResultSchema(subjectGetResponse);
@@ -188,8 +188,8 @@ export type StudyNewPostResponseResult = z.infer<
 export const studyEndPostRequest = z.object({
   id: z.coerce.number(),
   time: z.object({
-    studyTime: z.coerce.number(), // relative time in seconds
-    breakTime: z.coerce.number(), // relative time in seconds
+    studyTime: z.coerce.number(), // relative time in miliseconds
+    breakTime: z.coerce.number(), // relative time in miliseconds
   }),
   score: z.coerce.number(),
 });

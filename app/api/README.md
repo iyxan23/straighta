@@ -195,8 +195,8 @@ aplikasi ini untuk apa?
 type Request = {
   id: number;
   time: {
-    studyTime: number; // relative time in seconds
-    breakTime: number; // relative time in seconds
+    studyTime: number; // relative time in milliseconds
+    breakTime: number; // relative time in milliseconds
   };
   score: number;
 };

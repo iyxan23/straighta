@@ -6,7 +6,7 @@ import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
 
-const TOLERANCE = 10; // in seconds
+const TOLERANCE = 5 * 1000; // in milliseconds
 
 export async function POST(
   req: NextRequest
@@ -58,8 +58,7 @@ export async function POST(
     [{ now: Date }]
   >`SELECT * FROM now()`;
 
-  const start = studySession.start;
-  start.setSeconds(start.getSeconds() + studyTime + breakTime);
+  const start = new Date(studySession.start.getTime() + studyTime + breakTime);
 
   // compare it to now based on tolerance
   const difference = now.getTime() - start.getTime();
@@ -70,10 +69,13 @@ export async function POST(
   if (difference < toleranceStart || difference > toleranceEnd) {
     // nah, it aint right, remove the parent
     await prisma.studySession.delete({ where: { id: studySessionId } });
-    return NextResponse.json({
-      status: "err",
-      reason: "Invalid time",
-    });
+    return NextResponse.json(
+      {
+        status: "err",
+        reason: "Invalid time",
+      },
+      { status: 400 }
+    );
   }
 
   const session = await prisma.studySessionConclusion.create({
