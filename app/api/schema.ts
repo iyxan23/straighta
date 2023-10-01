@@ -35,13 +35,13 @@ export type AuthRegisterPostResponse = z.infer<typeof authRegisterPostResponse>;
 export const subjectGetRequest = z.object({
   id: z.coerce.number(),
 });
-export const subjectGetResponse = responseResultSchema(
-  z.object({
+export const subjectGetResponse = z.object({
     title: z.string(),
     overallScore: z.number(),
     materials: z.array(z.number()),
-  })
-);
+});
+export const subjectGetResponseResult =
+  responseResultSchema(subjectGetResponse);
 
 //  -> POST: create a new subject
 export const subjectPostRequest = z.object({
@@ -56,6 +56,7 @@ export const subjectPostResponseResult =
 
 export type SubjectGetRequest = z.infer<typeof subjectGetRequest>;
 export type SubjectGetResponse = z.infer<typeof subjectGetResponse>;
+export type SubjectGetResponseResult = z.infer<typeof subjectGetResponseResult>;
 
 export type SubjectPostRequest = z.infer<typeof subjectPostRequest>;
 export type SubjectPostResponse = z.infer<typeof subjectPostResponse>;

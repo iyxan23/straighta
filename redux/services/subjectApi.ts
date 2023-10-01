@@ -5,11 +5,11 @@ import {
   SubjectPostResponse,
   subjectPostResponseResult,
   SubjectGetRequest,
-  subjectGetResponse,
-  SubjectGetResponse,
+  subjectGetResponseResult,
   SubjectListGetRequest,
   SubjectListGetResponse,
   subjectListGetResponseResult,
+  SubjectGetResponse,
 } from "@/app/api/schema";
 import { Subject } from "@/lib/types";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -33,14 +33,15 @@ export const subjectApi = createApi({
       serializeQueryArgs: ({ queryArgs }) => queryArgs.id,
       transformResponse: async (resp) => {
         try {
-          return await subjectGetResponse.parseAsync(resp);
+          const result = await subjectGetResponseResult.parseAsync(resp);
+          if (result.status === "err") {
+            throw new Error(result.reason);
+          }
+          return result.payload;
         } catch (e) {
           console.error(`Server sent an invalid response of /api/subject:`);
           console.error(e);
-          return {
-            status: "err",
-            reason: "Server mengirim respon yang tidak valid",
-          };
+          throw e;
         }
       },
     }),

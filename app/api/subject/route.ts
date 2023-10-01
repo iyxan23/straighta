@@ -1,6 +1,6 @@
 import {
   subjectGetRequest,
-  SubjectGetResponse,
+  SubjectGetResponseResult,
   subjectPostRequest,
   SubjectPostResponseResult,
   subjectPostResponseResult,
@@ -12,7 +12,7 @@ import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
   req: NextRequest
-): Promise<NextResponse<SubjectGetResponse>> {
+): Promise<NextResponse<SubjectGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await searchParamsToObject(req.nextUrl.searchParams);
   const data = await subjectGetRequest.safeParseAsync(payload);

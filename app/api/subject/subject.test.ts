@@ -9,7 +9,7 @@ import { GET as subejctListGET } from "./list/route";
 import prisma from "@/prisma";
 import { createMockRequest, zip } from "@/lib/utils";
 import {
-  subjectGetResponse,
+  subjectGetResponseResult,
   subjectListGetResponse,
   subjectListGetResponseResult,
   subjectPostResponseResult,
@@ -123,7 +123,7 @@ describe("create and list subjects", () => {
 
       const data = await response
         .json()
-        .then((json) => subjectGetResponse.safeParseAsync(json));
+        .then((json) => subjectGetResponseResult.safeParseAsync(json));
 
       expect(data.success).toBe(true);
 
