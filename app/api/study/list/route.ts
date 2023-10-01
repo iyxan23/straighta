@@ -28,6 +28,9 @@ export async function GET(
     include: {
       conclusion: true,
     },
+    orderBy: {
+      start: "desc",
+    },
   });
 
   return NextResponse.json({
