@@ -71,12 +71,12 @@ export default function HistoryItem({
         </div>
         <div>
           <p className="whitespace-nowrap text-slate-700">
-            {start && end
+            {start
               ? `${new Date(start).toLocaleTimeString(undefined, {
                   hour: "2-digit",
                   minute: "2-digit",
                   hour12: false,
-                })}-${
+                })} - ${
                   end
                     ? new Date(end).toLocaleTimeString(undefined, {
                         hour: "2-digit",
