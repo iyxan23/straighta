@@ -4,7 +4,7 @@
   "author": "Nur Ihsan Al Ghifari <nurihsan.idn@gmail.com>",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 192.192.2.50 --port 3000",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
