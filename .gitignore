@@ -36,3 +36,5 @@ next-env.d.ts
 
 # bro dangerous env vars
 .env
+
+.vscode
