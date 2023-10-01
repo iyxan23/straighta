@@ -37,7 +37,7 @@ export default function History() {
     const moreData = data.length < offset + LIMIT;
 
     return (
-      <>
+      <ul className="space-y-2">
         {data.map((item) => (
           <HistoryItem key={item.id} studySession={item} />
         ))}
@@ -55,7 +55,7 @@ export default function History() {
             Muat lebih
           </button>
         )}
-      </>
+      </ul>
     );
   }
 
