@@ -75,7 +75,11 @@ export const studyApi = createApi({
       StudyNewPostResponse,
       StudyNewPostRequest
     >({
-      query: (body) => ({ url: "new", body: JSON.stringify(body) }),
+      query: (body) => ({
+        url: "new",
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
       transformResponse: async (resp) => {
         try {
           const result = await studyNewPostResponseResult.parseAsync(resp);
@@ -95,7 +99,11 @@ export const studyApi = createApi({
       StudyEndPostResponse,
       StudyEndPostRequest
     >({
-      query: (body) => ({ url: "new", body: JSON.stringify(body) }),
+      query: (body) => ({
+        url: "end",
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
       transformResponse: async (resp) => {
         try {
           const result = await studyEndPostResponseResult.parseAsync(resp);
