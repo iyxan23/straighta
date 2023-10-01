@@ -30,7 +30,7 @@ model Subject {
   id    Int    @id @default(autoincrement())
   title String
 
-  owner          User   @relation(fields: [owner_username], references: [username])
+  owner          User   @relation(fields: [owner_username], references: [username], onDelete: Cascade)
   owner_username String
 
   materials Material[]
@@ -42,10 +42,10 @@ model Material {
   id    Int    @id @default(autoincrement())
   title String
 
-  parent_subject Subject @relation(fields: [subject_id], references: [id])
+  parent_subject Subject @relation(fields: [subject_id], references: [id], onDelete: Cascade)
   subject_id     Int
 
-  owner          User   @relation(fields: [owner_username], references: [username])
+  owner          User   @relation(fields: [owner_username], references: [username], onDelete: Cascade)
   owner_username String
 
   study_sessions StudySession[]
@@ -57,10 +57,10 @@ model StudySession {
   id    Int      @id @default(autoincrement())
   start DateTime @default(now())
 
-  user     User   @relation(fields: [username], references: [username])
+  user     User   @relation(fields: [username], references: [username], onDelete: Cascade)
   username String
 
-  material    Material @relation(fields: [material_id], references: [id])
+  material    Material @relation(fields: [material_id], references: [id], onDelete: Cascade)
   material_id Int
 
   before_score Int
@@ -72,7 +72,7 @@ model StudySession {
 
 model StudySessionConclusion {
   id     Int          @id @default(autoincrement())
-  parent StudySession @relation(fields: [study_session_id], references: [id])
+  parent StudySession @relation(fields: [study_session_id], references: [id], onDelete: Cascade)
 
   study_session_id Int      @unique
   end              DateTime @default(now())
