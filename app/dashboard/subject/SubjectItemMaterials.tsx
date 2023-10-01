@@ -1,25 +1,39 @@
-import { subjectListGetRequest } from "@/app/api/schema";
-import { headers } from "next/headers";
+"use client";
 
-export default async function SubjectItemMaterials({
+import { useListMaterialsQuery } from "@/redux/services/materialApi";
+
+export default function SubjectItemMaterials({
   subjectId,
 }: {
   subjectId: number;
-}): Promise<JSX.Element> {
-  // const headersList = headers();
-  // const host = headersList.get("host");
-  // if (!host) {
-  //   throw new Error("no host header");
-  // }
+}): JSX.Element {
+  // todo: IntersectionObserver
 
-  // fetch(`${host}/api/subject/list`, {
-  //   method: "GET",
-  //   body: JSON.stringify(
-  //     await subjectListGetRequest.parseAsync({
-  //       limit: 10,
-  //       offset: 0,
-  //     })
-  //   ),
-  // });
-  return <>{subjectId}</>;
+  const { data, error } = useListMaterialsQuery({
+    subjectId,
+    limit: 99,
+    offset: 0,
+  });
+
+  if (error) {
+    return (
+      <p className="text-sm text-red-500">Error: {JSON.stringify(error)}</p>
+    );
+  }
+
+  if (data) {
+    return (
+      <>
+        {data.map((item) => (
+          <li key={item.id} className="flex items-center justify-between py-1">
+            <p>{item.title}</p>
+            <hr className="grow mx-4 border-dashed border-neutral-400 group-hover:border-neutral-500" />
+            <p className="text-yellow-500">{item.overallScore}%</p>
+          </li>
+        ))}
+      </>
+    );
+  }
+
+  return <p className="text-slate-500 animate-pulse">Loading...</p>;
 }

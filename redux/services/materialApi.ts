@@ -50,6 +50,7 @@ export const materialApi = createApi({
     >({
       query: (body) => {
         const params = new URLSearchParams({
+          subjectId: body.subjectId.toString(),
           limit: body.limit.toString(),
           offset: body.offset.toString(),
         });
@@ -68,7 +69,7 @@ export const materialApi = createApi({
           throw e;
         }
       },
-      serializeQueryArgs: ({ endpointName }) => endpointName,
+      serializeQueryArgs: ({ queryArgs }) => queryArgs.subjectId,
       merge: (currentCache, newItems) =>
         // to ensure that there will no objects with the same key
         // newItems is deliberately placed after currentCache so that it will override
@@ -110,7 +111,9 @@ export const materialApi = createApi({
           }
           return result.payload;
         } catch (e) {
-          console.error(`Server sent an invalid response of /api/material/list/all:`);
+          console.error(
+            `Server sent an invalid response of /api/material/list/all:`
+          );
           console.error(e);
           throw e;
         }
@@ -133,7 +136,10 @@ export const materialApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map((r) => ({ type: "materialAll" as const, id: r.id })),
+              ...result.map((r) => ({
+                type: "materialAll" as const,
+                id: r.id,
+              })),
               { type: "materialAll", id: "LIST" },
             ]
           : [{ type: "materialAll", id: "LIST" }],

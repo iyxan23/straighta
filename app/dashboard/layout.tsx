@@ -23,6 +23,7 @@ export default function DashboardLayout({
             <p className="opacity-50 text-sm">PELAJAR</p>
           </div>
           <LogoutButton />
+          {/* Invalidate all caches on logout */}
         </div>
         <div className="absolute max-md:bottom-2 md:top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <BottomButtonsBar />
