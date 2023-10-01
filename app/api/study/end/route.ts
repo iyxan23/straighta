@@ -6,7 +6,8 @@ import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
 
-const TOLERANCE = 5 * 1000; // in milliseconds
+// 1 minute tolerance
+const TOLERANCE = 60 * 1000; // in milliseconds
 
 export async function POST(
   req: NextRequest
