@@ -18,7 +18,7 @@ import { useEffect } from "react";
 export default function StudyModal() {
   const modalOpen = useAppSelector((state) => state.startStudyModal.visible);
   const selectedMaterialId = useAppSelector(
-    (state) => state.startStudyModal.selectedMaterialId
+    (state) => state.startStudyModal.selectedMaterialId,
   );
 
   const dispatch = useAppDispatch();
@@ -36,8 +36,8 @@ export default function StudyModal() {
         startStudySession({
           studySessionId: studySessionData.id,
           materialId: selectedMaterialId,
-          startDate: new Date(),
-        })
+          start: new Date().getTime(),
+        }),
       );
       push("/dashboard/study");
       dispatch(finishStartStudyModal());
@@ -59,6 +59,10 @@ export default function StudyModal() {
             <>Error: {error}</>
           ) : studySessionError ? (
             <>Error ketika membuat sesi belajar: {error}</>
+          ) : !data ? (
+            <Modal
+              content={() => <p className="animate-pulse">Loading...</p>}
+            />
           ) : (
             <Modal
               content={() => (
@@ -71,16 +75,13 @@ export default function StudyModal() {
                     <select
                       onChange={(ev) => {
                         dispatch(
-                          setStartStudyModalMaterialId(Number(ev.target.value))
+                          setStartStudyModalMaterialId(Number(ev.target.value)),
                         );
                       }}
+                      value={selectedMaterialId}
                     >
                       {data.map((s) => (
-                        <option
-                          value={s.id}
-                          key={s.id}
-                          selected={selectedMaterialId == s.id}
-                        >
+                        <option value={s.id} key={s.id}>
                           {s.title}
                         </option>
                       ))}

@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EDGE_RUNTIME_WEBPACK } from "next/dist/shared/lib/constants";
 
-type Agenda = "break" | "study";
+export type Agenda = "break" | "study" | "longBreak";
 
-type StudyItem = {
+export type StudyItem = {
   agenda: Agenda;
   elapsed: number;
 };
 
-type StudyItems = StudyItem[];
+export type StudyItems = StudyItem[];
 
 type StudyState = {
   studying: boolean;
@@ -31,13 +31,33 @@ export const study = createSlice({
   initialState,
   reducers: {
     reset: () => initialState,
-    startBreakTime: (
+    startLongBreakTime: (
       state: StudyState,
-      payload: PayloadAction<{ elapsed: number }>
+      payload: PayloadAction<{ elapsed: number }>,
     ) => {
       if (!state.currentAgenda) {
         throw new Error(
-          "currentAgenda is not set while trying to take a break"
+          "currentAgenda is not set while trying to take a long break",
+        );
+      }
+
+      state.studyItems = [
+        ...state.studyItems,
+        {
+          agenda: state.currentAgenda,
+          elapsed: payload.payload.elapsed,
+        },
+      ];
+
+      state.currentAgenda = "longBreak";
+    },
+    startBreakTime: (
+      state: StudyState,
+      payload: PayloadAction<{ elapsed: number }>,
+    ) => {
+      if (!state.currentAgenda) {
+        throw new Error(
+          "currentAgenda is not set while trying to take a break",
         );
       }
 
@@ -53,11 +73,11 @@ export const study = createSlice({
     },
     startStudyTime: (
       state: StudyState,
-      payload: PayloadAction<{ elapsed: number }>
+      payload: PayloadAction<{ elapsed: number }>,
     ) => {
       if (!state.currentAgenda) {
         throw new Error(
-          "currentAgenda is not set while trying to take a break"
+          "currentAgenda is not set while trying to take a break",
         );
       }
 
@@ -73,13 +93,13 @@ export const study = createSlice({
       payload: PayloadAction<{
         studySessionId: number;
         materialId: number;
-        startDate: Date;
-      }>
+        start: number;
+      }>,
     ) => {
       state.studying = true;
       state.studySessionId = payload.payload.studySessionId;
       state.focusMaterialId = payload.payload.materialId;
-      state.start = payload.payload.startDate.getTime();
+      state.start = payload.payload.start;
       state.currentAgenda = "study";
       state.studyItems = [];
     },
@@ -94,6 +114,7 @@ export const study = createSlice({
 
 export const {
   reset,
+  startLongBreakTime,
   startBreakTime,
   startStudyTime,
   startStudySession,
