@@ -11,7 +11,6 @@ export default function StudyView() {
   const focusMaterialId = useAppSelector(
     (state) => state.study.focusMaterialId
   )!;
-  const startTime = useAppSelector((state) => state.study.start)!;
 
   const { replace } = useRouter();
 
