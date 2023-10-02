@@ -5,11 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { studyListGetRequest, StudyListGetResponseResult } from "../../schema";
 
 export async function GET(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<NextResponse<StudyListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await studyListGetRequest.safeParseAsync(
-    searchParamsToObject(req.nextUrl.searchParams)
+    searchParamsToObject(req.nextUrl.searchParams),
   );
 
   if (!payload.success) {
@@ -41,6 +41,12 @@ export async function GET(
         start: s.start.valueOf(),
         end: s.conclusion?.end?.valueOf(),
       },
+      agendas: s.conclusion
+        ? {
+            study: s.conclusion.study_time,
+            break: s.conclusion.break_time,
+          }
+        : undefined,
       materialId: s.material_id,
     })),
   });

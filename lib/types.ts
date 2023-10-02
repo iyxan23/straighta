@@ -12,6 +12,10 @@ export type StudySession = {
     start: number;
     end?: number;
   };
+  agendas?: {
+    study: number;
+    break: number;
+  },
   materialId: number;
 };
 

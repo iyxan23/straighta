@@ -12,7 +12,7 @@ export const authLoginPostRequest = z.object({
   password: z.string(),
 });
 export const authLoginPostResponse = responseResultSchema(
-  z.object({ redirect: z.string() })
+  z.object({ redirect: z.string() }),
 );
 
 export type AuthLoginPostRequest = z.infer<typeof authLoginPostRequest>;
@@ -24,7 +24,7 @@ export const authRegisterPostRequest = z.object({
   password: z.string().min(8, "password minimal 8 karakter"),
 });
 export const authRegisterPostResponse = responseResultSchema(
-  z.object({ redirect: z.string() })
+  z.object({ redirect: z.string() }),
 );
 
 export type AuthRegisterPostRequest = z.infer<typeof authRegisterPostRequest>;
@@ -81,10 +81,10 @@ export const subjectListGetResponse = z.array(
     id: z.number(),
     title: z.string(),
     overallScore: z.number(),
-  })
+  }),
 );
 export const subjectListGetResponseResult = responseResultSchema(
-  subjectListGetResponse
+  subjectListGetResponse,
 );
 
 export type SubjectListGetRequest = z.infer<typeof subjectListGetRequest>;
@@ -127,10 +127,10 @@ export const materialListGetResponse = z.array(
     title: z.string(),
     overallScore: z.number(),
     subjectId: z.number(),
-  })
+  }),
 );
 export const materialListGetResponseResult = responseResultSchema(
-  materialListGetResponse
+  materialListGetResponse,
 );
 
 export type MaterialListGetRequest = z.infer<typeof materialListGetRequest>;
@@ -153,10 +153,10 @@ export const materialListAllGetResponse = z.array(
     title: z.string(),
     overallScore: z.number(),
     subjectId: z.number(),
-  })
+  }),
 );
 export const materialListAllGetResponseResult = responseResultSchema(
-  materialListAllGetResponse
+  materialListAllGetResponse,
 );
 
 export type MaterialListAllGetRequest = z.infer<
@@ -209,7 +209,7 @@ export const studyCancelPostRequest = z.object({
 });
 export const studyCancelPostResponse = z.object({});
 export const studyCancelPostResponseResult = responseResultSchema(
-  studyCancelPostResponse
+  studyCancelPostResponse,
 );
 
 export type StudyCancelPostRequest = z.infer<typeof studyCancelPostRequest>;
@@ -229,8 +229,14 @@ export const studyListGetResponse = z.array(
       start: z.number(),
       end: z.optional(z.number()),
     }),
+    agendas: z.optional(
+      z.object({
+        study: z.number(),
+        break: z.number(),
+      }),
+    ),
     materialId: z.number(),
-  })
+  }),
 );
 
 export const studyListGetResponseResult =
