@@ -1,30 +1,15 @@
 "use client";
 
-import { useListMaterialsQuery } from "@/redux/services/materialApi";
+import { Material } from "@/lib/types";
 
 export default function SubjectItemMaterials({
-  subjectId,
+  materials
 }: {
-  subjectId: number;
+  materials: Material[]
 }): JSX.Element {
-  // todo: IntersectionObserver
-
-  const { data, error } = useListMaterialsQuery({
-    subjectId,
-    limit: 99,
-    offset: 0,
-  });
-
-  if (error) {
-    return (
-      <p className="text-sm text-red-500">Error: {JSON.stringify(error)}</p>
-    );
-  }
-
-  if (data) {
     return (
       <>
-        {data.map((item) => (
+        {materials.map((item) => (
           <li key={item.id} className="flex items-center justify-between py-1">
             <p>{item.title}</p>
             <hr className="grow mx-4 border-dashed border-neutral-400 group-hover:border-neutral-500" />
@@ -33,7 +18,4 @@ export default function SubjectItemMaterials({
         ))}
       </>
     );
-  }
-
-  return <p className="text-slate-500 animate-pulse">Loading...</p>;
 }
