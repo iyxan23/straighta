@@ -24,7 +24,6 @@ export default function HistoryItem({
     agendas,
     materialId,
   } = studySession;
-  console.log(studySession);
 
   const [fetchMaterial, { data: materialData, error: materialError }] =
     useLazyGetMaterialByIdQuery();
