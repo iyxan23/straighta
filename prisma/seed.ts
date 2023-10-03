@@ -1,8 +1,10 @@
 import bcryptjs from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
+import { Material, PrismaClient } from "@prisma/client";
 import { fakerID_ID as faker } from "@faker-js/faker";
 import { nuke } from "./nuke";
-import { isErrored } from "stream";
+import sub from "date-fns/sub";
+import endOfDay from "date-fns/endOfDay";
+import formatRFC7231 from "date-fns/formatRFC7231";
 
 console.log("🔌 connecting to the database");
 const prisma = new PrismaClient();
@@ -276,7 +278,7 @@ async function main() {
     },
   });
 
-  console.log(`🌱 [I] username: ${user.username}, password: ${PASSWORD}`);
+  console.log(`🌱 [I] username: ${user.username}, password: ${PASSWORD}\n`);
   prisma.subject.create({
     data: {
       title: "duarr",
@@ -294,6 +296,7 @@ async function main() {
     },
   });
 
+  // create materials and its subjects
   await Promise.all(
     SUBJECT_DATASET.map((s) =>
       prisma.subject.create({
@@ -310,9 +313,71 @@ async function main() {
             },
           },
         },
-      })
-    )
+      }),
+    ),
   );
+
+  // create study sessions
+  const ranges = faker.date
+    .betweens({
+      from: sub(new Date(), { months: 4 }),
+      to: sub(new Date(), { days: 1 }),
+      count: {
+        min: 30,
+        max: 80,
+      },
+    })
+    .map((date) => ({
+      from: date,
+      to: faker.date.between({ from: date, to: endOfDay(date) }),
+    }));
+
+  const sessions = await Promise.all(
+    ranges.map(({ from, to }) =>
+      prisma.$queryRaw<
+        [Material]
+      >`SELECT * FROM material ORDER BY random() LIMIT 1`.then(
+        ([{ id: randomMaterialId }]) =>
+          prisma.studySession
+            .create({
+              data: {
+                username: user.username,
+                before_score: Math.floor(easeOutExpo(Math.random()) * 100),
+                material_id: randomMaterialId,
+                start: from,
+                conclusion: {
+                  create: {
+                    end: to,
+                    study_time: (8 / 10) * (to.getTime() - from.getTime()),
+                    break_time: (2 / 10) * (to.getTime() - from.getTime()),
+                    after_score: Math.floor(easeOutExpo(Math.random()) * 100),
+                  },
+                },
+              },
+              include: {
+                conclusion: true,
+              },
+            })
+            .then((res) => {
+              console.log(
+                `🌱 [I] new StudySesion ${res.id}: with material ${res.material_id}`,
+              );
+              console.log(`       from ${formatRFC7231(res.start)}`);
+              console.log(
+                `       to   ${
+                  res.conclusion ? formatRFC7231(res.conclusion?.end) : "now"
+                }\n`,
+              );
+            }),
+      ),
+    ),
+  );
+
+  console.log(`🌱 [I] total ${sessions.length}`);
+}
+
+function easeOutExpo(x: number): number {
+  return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
 }
 
 nuke()
