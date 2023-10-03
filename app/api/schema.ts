@@ -235,6 +235,10 @@ export const studyListGetResponse = z.array(
         break: z.number(),
       }),
     ),
+    scores: z.object({
+      before: z.number(),
+      after: z.optional(z.number()),
+    }),
     materialId: z.number(),
   }),
 );

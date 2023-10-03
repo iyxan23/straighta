@@ -362,6 +362,7 @@ async function main() {
               console.log(
                 `🌱 [I] new StudySesion ${res.id}: with material ${res.material_id}`,
               );
+              console.log(`       score -> before: ${res.before_score}, after: ${res.conclusion?.after_score}`);
               console.log(`       from ${formatRFC7231(res.start)}`);
               console.log(
                 `       to   ${

@@ -25,7 +25,7 @@ export function createMockRequest({
 
 export function zip<A, B, ListA extends A[] = A[], ListB extends B[] = B[]>(
   a: ListA,
-  b: ListB
+  b: ListB,
 ): [A, B][] {
   return a.map((k: A, i: number) => [k, b[i]]);
 }
@@ -34,14 +34,26 @@ export function sleep(millis: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, millis));
 }
 
+export function classNameOfScore(score: number): string {
+  if (score < 50) {
+    return "text-red-700";
+  } else if (score < 75) {
+    return "text-amber-700";
+  } else if (score < 85) {
+    return "text-lime-700";
+  } else {
+    return "text-green-700";
+  }
+}
+
 export function searchParamsToObject(
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
 ): Record<string, string> {
   return Array.from(searchParams).reduce(
     (prev, [key, value]) => {
       prev[key] = value;
       return prev;
     },
-    {} as Record<string, string>
+    {} as Record<string, string>,
   );
 }
