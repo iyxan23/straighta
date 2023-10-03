@@ -71,14 +71,13 @@ export const subjectApi = createApi({
         // to ensure that there will no objects with the same key
         // newItems is deliberately placed after currentCache so that it will override
         // currentCache's values, since it has newer data.
-        Object.values(
-          [...currentCache, ...newItems].reduce(
-            (prev, cur) => {
-              prev[cur.id] = cur;
+        Array.from(
+          [...currentCache, ...newItems]
+            .reduce((prev, cur) => {
+              prev.set(cur.id, cur);
               return prev;
-            },
-            {} as Record<number, Subject>
-          )
+            }, new Map<number, Subject>())
+            .values(),
         ),
       forceRefetch: ({ currentArg, previousArg }) => currentArg !== previousArg,
       providesTags: (result) =>
