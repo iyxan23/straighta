@@ -2,6 +2,7 @@ import DashboardAnimatePresence from "./DashboardAnimatePresence";
 import Schedule from "./Schedule";
 import StudyModal from "./StudyModal";
 import StudyHistory from "./StudyHistory";
+import StudyHistoryModal from './StudyHistoryModal';
 
 export default function DashboardMainPage() {
   return (
@@ -17,6 +18,7 @@ export default function DashboardMainPage() {
           <h2 className="font-bold text-2xl text-slate-700 mb-4">Riwayat</h2>
           <div className="flex flex-col w-full gap-4">
             <StudyHistory />
+            <StudyHistoryModal />
           </div>
         </div>
       </div>
