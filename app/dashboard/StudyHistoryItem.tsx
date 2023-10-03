@@ -11,6 +11,7 @@ import addMilliseconds from "date-fns/addMilliseconds";
 import ArrowRightIcon from "mdi-react/ArrowRightIcon";
 import SchoolIcon from "mdi-react/SchoolIcon";
 import SleepIcon from "mdi-react/SleepIcon";
+import { classNameOfScore } from "@/lib/utils";
 
 export default function HistoryItem({
   studySession,
@@ -22,9 +23,9 @@ export default function HistoryItem({
     id,
     timestamp: { start, end },
     agendas,
+    scores,
     materialId,
   } = studySession;
-  console.log(studySession);
 
   const [fetchMaterial, { data: materialData, error: materialError }] =
     useLazyGetMaterialByIdQuery();
@@ -104,9 +105,23 @@ export default function HistoryItem({
           </div>
           <div>
             <p className="text-lg flex flex-row gap-2 items-center">
-              <span className="text-green-700 font-semibold">{85}</span>
-              <ArrowRightIcon size={16} />
-              <span className="text-amber-600 font-semibold">{74}</span>
+              <span
+                className={`font-semibold ${classNameOfScore(scores.before)}`}
+              >
+                {scores.before}
+              </span>
+              {scores.after && (
+                <>
+                  <ArrowRightIcon size={16} />
+                  <span
+                    className={`font-semibold ${classNameOfScore(
+                      scores.after,
+                    )}`}
+                  >
+                    {scores.after}
+                  </span>
+                </>
+              )}
             </p>
           </div>
           {agendas && (

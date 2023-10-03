@@ -40,7 +40,7 @@ export const studyApi = createApi({
             return result.payload;
           } catch (e) {
             console.error(
-              `Server sent an invalid response of /api/study/list:`
+              `Server sent an invalid response of /api/study/list:`,
             );
             console.error(e);
             throw e;
@@ -51,14 +51,13 @@ export const studyApi = createApi({
           // to ensure that there will no objects with the same key
           // newItems is deliberately placed after currentCache so that it will override
           // currentCache's values, since it has newer data.
-          Object.values(
-            [...currentCache, ...newItems].reduce(
-              (prev, cur) => {
-                prev[cur.id] = cur;
+          Array.from(
+            [...currentCache, ...newItems]
+              .reduce((prev, cur) => {
+                prev.set(cur.id, cur);
                 return prev;
-              },
-              {} as Record<number, StudySession>
-            )
+              }, new Map<number, StudySession>())
+              .values(),
           ),
         forceRefetch: ({ currentArg, previousArg }) =>
           currentArg !== previousArg,
@@ -69,7 +68,7 @@ export const studyApi = createApi({
                 { type: "study", id: "LIST" },
               ]
             : [{ type: "study", id: "LIST" }],
-      }
+      },
     ),
     createStudySession: builder.mutation<
       StudyNewPostResponse,

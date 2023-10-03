@@ -23,7 +23,7 @@ export async function GET(
 
   const studySessions = await prisma.studySession.findMany({
     where: { username },
-    skip: offset != 0 ? undefined : offset,
+    skip: offset == 0 ? undefined : offset,
     take: limit,
     include: {
       conclusion: true,
@@ -47,6 +47,10 @@ export async function GET(
             break: s.conclusion.break_time,
           }
         : undefined,
+      scores: {
+        before: s.before_score,
+        after: s.conclusion ? s.conclusion.after_score : undefined,
+      },
       materialId: s.material_id,
     })),
   });

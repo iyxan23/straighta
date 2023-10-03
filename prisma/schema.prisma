@@ -21,7 +21,8 @@ model User {
   subjects  Subject[]
   materials Material[]
 
-  sessions StudySession[]
+  sessions  StudySession[]
+  schedules Schedule[]
 
   @@map("user")
 }
@@ -48,7 +49,8 @@ model Material {
   owner          User   @relation(fields: [owner_username], references: [username], onDelete: Cascade)
   owner_username String
 
-  study_sessions StudySession[]
+  study_sessions    StudySession[]
+  ScheduleTimeBlock ScheduleTimeBlock[]
 
   @@map("material")
 }
@@ -83,4 +85,41 @@ model StudySessionConclusion {
   after_score Int
 
   @@map("study_session_conclusion")
+}
+
+model Schedule {
+  id Int @id @default(autoincrement())
+
+  user     User   @relation(fields: [username], references: [username])
+  username String
+
+  first_day_timestamp Int // where time is 00:00
+  days                ScheduleDay[]
+
+  @@map("schedule")
+}
+
+model ScheduleDay {
+  id        Int      @id @default(autoincrement())
+  parent    Schedule @relation(fields: [parent_id], references: [id])
+  parent_id Int
+
+  time_blocks ScheduleTimeBlock[]
+
+  @@map("schedule_day")
+}
+
+model ScheduleTimeBlock {
+  id Int @id @default(autoincrement())
+
+  day             ScheduleDay @relation(fields: [schedule_day_id], references: [id])
+  schedule_day_id Int
+
+  start_rel_timestamp Int // relative from the start of the day
+  end_rel_timestamp   Int
+
+  material    Material @relation(fields: [material_id], references: [id])
+  material_id Int
+
+  @@map("schedule_time_block")
 }

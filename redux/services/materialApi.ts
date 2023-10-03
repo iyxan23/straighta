@@ -74,14 +74,13 @@ export const materialApi = createApi({
         // to ensure that there will no objects with the same key
         // newItems is deliberately placed after currentCache so that it will override
         // currentCache's values, since it has newer data.
-        Object.values(
-          [...currentCache, ...newItems].reduce(
-            (prev, cur) => {
-              prev[cur.id] = cur;
+        Array.from(
+          [...currentCache, ...newItems]
+            .reduce((prev, cur) => {
+              prev.set(cur.id, cur);
               return prev;
-            },
-            {} as Record<number, Material>
-          )
+            }, new Map<number, Material>())
+            .values(),
         ),
       forceRefetch: ({ currentArg, previousArg }) => currentArg !== previousArg,
       providesTags: (result) =>
@@ -112,7 +111,7 @@ export const materialApi = createApi({
           return result.payload;
         } catch (e) {
           console.error(
-            `Server sent an invalid response of /api/material/list/all:`
+            `Server sent an invalid response of /api/material/list/all:`,
           );
           console.error(e);
           throw e;
@@ -129,8 +128,8 @@ export const materialApi = createApi({
               prev[cur.id] = cur;
               return prev;
             },
-            {} as Record<number, Material>
-          )
+            {} as Record<number, Material>,
+          ),
         ),
       forceRefetch: ({ currentArg, previousArg }) => currentArg !== previousArg,
       providesTags: (result) =>

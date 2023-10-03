@@ -16,6 +16,10 @@ export type StudySession = {
     study: number;
     break: number;
   },
+  scores: {
+    before: number;
+    after?: number;
+  }
   materialId: number;
 };
 
