@@ -1,6 +1,7 @@
 "use client";
 
 import CustomCard from "@/components/CustomCard";
+import { classNameOfScore } from "@/lib/utils";
 import { useLazyListMaterialsQuery } from "@/redux/services/materialApi";
 import { useEffect, useRef } from "react";
 import SubjectItemMaterials from "./SubjectItemMaterials";
@@ -44,7 +45,7 @@ export default function SubjectItem({
     <CustomCard ref={elemRef} key={subjectId} className="group p-8" hoverable>
       <div className="flex flex-row justify-between">
         <h2 className="text-xl font-bold text-slate-600">{title}</h2>
-        <p className="text-yellow-500 text-lg font-semibold">{overallScore}%</p>
+        <p className={`text-lg font-semibold ${classNameOfScore(overallScore)}`}>{overallScore}%</p>
       </div>
       <ul className="text-neutral-700 mt-3">
         {error ? (
