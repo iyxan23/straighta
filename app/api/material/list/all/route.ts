@@ -6,9 +6,10 @@ import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma";
 import { searchParamsToObject } from "@/lib/utils";
+import { materialsAllAvgScore } from "@/prisma/queries/material";
 
 export async function GET(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<NextResponse<MaterialListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const data = searchParamsToObject(req.nextUrl.searchParams);
@@ -23,12 +24,10 @@ export async function GET(
 
   const { limit, offset } = result.data;
 
-  const materials = await prisma.material.findMany({
-    skip: offset,
-    take: limit,
-    where: {
-      owner_username: username,
-    },
+  const materials = await materialsAllAvgScore({
+    limit,
+    offset,
+    username,
   });
 
   return NextResponse.json({
@@ -36,7 +35,7 @@ export async function GET(
     payload: materials.map((m) => ({
       id: m.id,
       title: m.title,
-      overallScore: 89, // todo
+      overallScore: Number(m.avg),
       subjectId: m.subject_id,
     })),
   });
