@@ -251,3 +251,28 @@ export type StudyListGetResponse = z.infer<typeof studyListGetResponse>;
 export type StudyListGetResponseResult = z.infer<
   typeof studyListGetResponseResult
 >;
+
+// /api/schedule
+export const scheduleGetRequest = z.object({
+  time: z.coerce.number(),
+});
+export const scheduleGetResponse = z
+  .array(
+    z.array(
+      z.object({
+        materialId: z.number(),
+        startRelativeTimestamp: z.number(),
+        endRelativeTimestamp: z.number(),
+      }),
+    ),
+  )
+  .length(7);
+
+export const scheduleGetResponseResult =
+  responseResultSchema(scheduleGetResponse);
+
+export type ScheduleGetRequest = z.infer<typeof scheduleGetRequest>;
+export type ScheduleGetResponse = z.infer<typeof scheduleGetResponse>;
+export type ScheduleGetResponseResult = z.infer<
+  typeof scheduleGetResponseResult
+>;

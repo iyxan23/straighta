@@ -9,6 +9,7 @@ import { subjectApi } from "./services/subjectApi";
 import { configureStore } from "@reduxjs/toolkit";
 import { studyApi } from "./services/studyApi";
 import { materialApi } from "./services/materialApi";
+import { scheduleApi } from "./services/scheduleApi";
 
 export const store = configureStore({
   reducer: {
@@ -21,12 +22,14 @@ export const store = configureStore({
     [subjectApi.reducerPath]: subjectApi.reducer,
     [studyApi.reducerPath]: studyApi.reducer,
     [materialApi.reducerPath]: materialApi.reducer,
+    [scheduleApi.reducerPath]: scheduleApi.reducer,
   },
   middleware: (gDM) =>
     gDM()
       .concat(subjectApi.middleware)
       .concat(studyApi.middleware)
-      .concat(materialApi.middleware),
+      .concat(materialApi.middleware)
+      .concat(scheduleApi.middleware),
   devTools: process.env.NODE_ENV !== "production",
 });
 

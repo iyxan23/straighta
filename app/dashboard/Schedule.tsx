@@ -1,13 +1,9 @@
 "use client";
 
-import { TimeoutId } from "@reduxjs/toolkit/dist/query/core/buildMiddleware/types";
-import React, { useEffect } from "react";
+import { sec } from "@/lib/utils";
+import { useGetScheduleQuery } from "@/redux/services/scheduleApi";
+import React, { useEffect, useRef } from "react";
 import ScheduleItem, { TimeBlock } from "./ScheduleItem";
-
-function sec(time: `${number}:${number}`) {
-  const [hours, minutes] = time.split(":", 2).map((s) => Number(s));
-  return minutes * 60 + hours * 60 * 60;
-}
 
 type DaySchedule = { scheduled: TimeBlock[]; completed: string[] };
 type Schedule = [
@@ -18,49 +14,6 @@ type Schedule = [
   DaySchedule,
   DaySchedule,
   DaySchedule,
-];
-
-// [0] is sunday
-const schedule: Schedule = [
-  {
-    scheduled: [{ text: "Membaca teks", range: [sec("18:00"), sec("20:00")] }],
-    // completed: ["Membaca teks"],
-    completed: [],
-  },
-  {
-    scheduled: [
-      { text: "Memahami Pertambahan", range: [sec("18:00"), sec("20:00")] },
-    ],
-    // completed: ["Memahami Pertambahan"],
-    completed: [],
-  },
-  {
-    scheduled: [{ text: "Materi 2", range: [sec("18:00"), sec("20:00")] }],
-    completed: [],
-  },
-  {
-    scheduled: [{ text: "Materi 7", range: [sec("18:00"), sec("20:00")] }],
-    completed: [],
-  },
-  {
-    scheduled: [
-      { text: "Menyusun Proposal", range: [sec("18:00"), sec("20:00")] },
-    ],
-    completed: [],
-  },
-  {
-    scheduled: [
-      { text: "Selektor dalam CSS", range: [sec("18:00"), sec("20:00")] },
-    ],
-    completed: [],
-  },
-  {
-    scheduled: [
-      { text: "Kegunaan Edge Servers", range: [sec("08:00"), sec("10:00")] },
-      { text: "Kenapa air bening?", range: [sec("15:45"), sec("17:00")] },
-    ],
-    completed: [],
-  },
 ];
 
 const weekdays = [
@@ -74,6 +27,11 @@ const weekdays = [
 ];
 
 export default function Schedule() {
+  const nowDate = useRef(new Date());
+  const { data: schedule, error } = useGetScheduleQuery({
+    time: nowDate.current.getTime(),
+  });
+
   const [timeMs, setTimeMs] = React.useState(0);
 
   useEffect(() => {
@@ -90,61 +48,76 @@ export default function Schedule() {
   });
 
   return (
-    <>
-      {schedule.map((s, index) => {
-        const nowTime = new Date(timeMs);
-        const seconds = timeMs / 1000 - nowTime.getTimezoneOffset() * 60;
-        const dayOfTheWeek = new Date().getUTCDay();
+    schedule && (
+      <>
+        {schedule.map((s, index) => {
+          const nowTime = new Date(timeMs);
+          const seconds = timeMs / 1000 - nowTime.getTimezoneOffset() * 60;
+          const dayOfTheWeek = new Date().getUTCDay();
 
-        const completedSchedules = s.scheduled.filter((t) =>
-          s.completed.includes(t.text)
-        );
+          // const completedSchedules = s.scheduled.filter((t) =>
+          //   s.completed.includes(t.text)
+          // );
 
-        function isScheduleDismissed(
-          block: TimeBlock,
-          dayOfTheWeek: number,
-          timeBlockDayOfTheWeek: number
-        ): boolean {
-          const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
-          const secsFromMonday = dayOfTheWeek * SECONDS_IN_ONE_DAY;
-          const secsFromTimeBlock = timeBlockDayOfTheWeek * SECONDS_IN_ONE_DAY;
+          function isScheduleDismissed(
+            block: [number, number],
+            dayOfTheWeek: number,
+            timeBlockDayOfTheWeek: number,
+          ): boolean {
+            const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
+            const secsFromMonday = dayOfTheWeek * SECONDS_IN_ONE_DAY;
+            const secsFromTimeBlock =
+              timeBlockDayOfTheWeek * SECONDS_IN_ONE_DAY;
 
-          return secsFromTimeBlock + block.range[1] < secsFromMonday + seconds;
-        }
+            return secsFromTimeBlock + block[1] < secsFromMonday + seconds;
+          }
 
-        return (
-          <ScheduleItem
-            weekday={weekdays[index]}
-            scheduledRanges={s.scheduled}
-            completedRanges={completedSchedules}
-            dismissedRanges={s.scheduled.filter(
-              (t) =>
-                !completedSchedules.includes(t) &&
-                isScheduleDismissed(t, dayOfTheWeek, index)
-            )}
-            cursor={
-              dayOfTheWeek == index
-                ? {
-                    position: seconds,
-                    text: nowTime.toLocaleTimeString(undefined, {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }),
-                  }
-                : undefined
-            }
-            blocked={
-              dayOfTheWeek == index
-                ? [sec("00:00"), seconds]
-                : dayOfTheWeek > index
-                ? [sec("00:00"), sec("24:00")]
-                : undefined
-            }
-            key={index}
-          />
-        );
-      })}
-    </>
+          return (
+            <ScheduleItem
+              weekday={weekdays[index]}
+              scheduledRanges={s.map((i) => ({
+                text: "test",
+                range: [i.startRelativeTimestamp, i.endRelativeTimestamp],
+              }))}
+              // completedRanges={completedSchedules}
+              completedRanges={[]} // todo: include completed schedules in api
+              dismissedRanges={s
+                .filter((i) =>
+                  // !completedSchedules.includes(t) &&
+                  isScheduleDismissed(
+                    [i.startRelativeTimestamp, i.endRelativeTimestamp],
+                    dayOfTheWeek,
+                    index,
+                  ),
+                )
+                .map((i) => ({
+                  text: "test",
+                  range: [i.startRelativeTimestamp, i.endRelativeTimestamp],
+                }))}
+              cursor={
+                dayOfTheWeek == index
+                  ? {
+                      position: seconds,
+                      text: nowTime.toLocaleTimeString(undefined, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      }),
+                    }
+                  : undefined
+              }
+              blocked={
+                dayOfTheWeek == index
+                  ? [sec("00:00"), seconds]
+                  : dayOfTheWeek > index
+                  ? [sec("00:00"), sec("24:00")]
+                  : undefined
+              }
+              key={index}
+            />
+          );
+        })}
+      </>
+    )
   );
 }

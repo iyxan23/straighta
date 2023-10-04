@@ -7,6 +7,7 @@ import {
   ScheduleDay as DbScheduleDay,
   ScheduleTimeBlock as DbScheduleTimeBlock,
 } from "@prisma/client";
+import { sec } from "@/lib/utils";
 
 // The one and only, scheduler
 // This is made as a class so it's easier to pass things around
@@ -34,8 +35,8 @@ export default class Scheduler {
     return prisma.schedule.findFirst({
       where: {
         first_day_timestamp: {
-          gt: startOfDay(this.startOfTheWeek).getTime(),
-          lt: endOfDay(this.startOfTheWeek).getTime(),
+          gte: startOfDay(this.startOfTheWeek),
+          lte: endOfDay(this.startOfTheWeek),
         },
       },
       include: {
@@ -77,9 +78,67 @@ export default class Scheduler {
       ];
     }
 
-    throw new Error("Not implemented");
+    // throw new Error("Not implemented");
+    return testData;
   }
 }
+
+const testData: Schedule = [
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("18:00"),
+      endRelativeTimestamp: sec("20:00"),
+    },
+  ],
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("18:00"),
+      endRelativeTimestamp: sec("20:00"),
+    },
+  ],
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("18:00"),
+      endRelativeTimestamp: sec("20:00"),
+    },
+  ],
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("18:00"),
+      endRelativeTimestamp: sec("20:00"),
+    },
+  ],
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("18:00"),
+      endRelativeTimestamp: sec("20:00"),
+    },
+  ],
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("18:00"),
+      endRelativeTimestamp: sec("20:00"),
+    },
+  ],
+  [
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("08:15"),
+      endRelativeTimestamp: sec("10:15"),
+    },
+    {
+      materialId: 1437,
+      startRelativeTimestamp: sec("16:00"),
+      endRelativeTimestamp: sec("18:00"),
+    },
+  ],
+];
 
 export type Schedule = [
   ScheduleDay,

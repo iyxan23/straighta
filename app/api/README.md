@@ -237,3 +237,34 @@ type Response = ResponseResult<
   }[]
 >;
 ```
+
+### `[🛡️]` `/api/schedule`
+
+#### `GET`
+
+```typescript
+type Request = {
+  time: number; // timestamp in millis
+};
+
+// 0 is sunday
+type Response = ResponseResult<
+  [
+    ScheduleDay,
+    ScheduleDay,
+    ScheduleDay,
+    ScheduleDay,
+    ScheduleDay,
+    ScheduleDay,
+    ScheduleDay,
+  ]
+>;
+
+type ScheduleDay = {
+  timeblocks: {
+    materialId: number;
+    from: number; // relative time from the start of the day in millis
+    to: number; // relative time from the start of the day in millis
+  }[];
+};
+```

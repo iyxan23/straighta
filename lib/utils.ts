@@ -46,6 +46,11 @@ export function classNameOfScore(score: number): string {
   }
 }
 
+export function sec(time: `${number}:${number}`): number {
+  const [hours, minutes] = time.split(":", 2).map((s) => Number(s));
+  return minutes * 60 + hours * 60 * 60;
+}
+
 export function searchParamsToObject(
   searchParams: URLSearchParams,
 ): Record<string, string> {
