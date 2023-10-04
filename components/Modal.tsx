@@ -4,11 +4,15 @@
 //   untuk nampilin modal. nah trus ada callback or something gitu.
 export default function Modal({
   children,
+  className,
 }: {
   children?: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="z-20 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white max-w-lg">
+    <div
+      className={`z-20 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white max-w-lg ${className}`}
+    >
       {children}
     </div>
   );

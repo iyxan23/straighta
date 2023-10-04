@@ -21,7 +21,7 @@ export const studyHistoryModal = createSlice({
       state: StudyHistoryModalState,
       action: PayloadAction<number>,
     ) => {
-      state.visible = !state.visible;
+      state.visible = true;
       state.id = action.payload;
     },
   },
