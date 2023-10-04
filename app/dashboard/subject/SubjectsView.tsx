@@ -20,10 +20,10 @@ import { CustomForm } from "@/components";
 export default function SubjectsView() {
   const query = useAppSelector((state) => state.query.query);
   const newSubjectName = useAppSelector(
-    (state) => state.newSubjectModal.newSubjectName
+    (state) => state.newSubjectModal.newSubjectName,
   );
   const newSubjectMaterials = useAppSelector(
-    (state) => state.newSubjectModal.subjectMaterials
+    (state) => state.newSubjectModal.subjectMaterials,
   );
   const modalOpen = useAppSelector((state) => state.newSubjectModal.visible);
   const dispatch = useAppDispatch();
@@ -58,62 +58,58 @@ export default function SubjectsView() {
           key={"modal"}
           className="z-20 fixed top-0 bottom-0 w-screen h-screen bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center"
         >
-          <Modal
-            content={() => (
-              <CustomForm>
-                <h2 className="text-xl font-bold text-slate-700 mb-2">
-                  Buat pembelajaran baru
-                </h2>
-                <p className="mb-1 mt-2">Nama pembelajaran:</p>
-                <input
-                  value={newSubjectName}
-                  onChange={(ev) => dispatch(setSubjectName(ev.target.value))}
-                  className="border w-full rounded-lg p-2"
-                  type="text"
+          <Modal>
+            <CustomForm>
+              <h2 className="text-xl font-bold text-slate-700 mb-2">
+                Buat pembelajaran baru
+              </h2>
+              <p className="mb-1 mt-2">Nama pembelajaran:</p>
+              <input
+                value={newSubjectName}
+                onChange={(ev) => dispatch(setSubjectName(ev.target.value))}
+                className="border w-full rounded-lg p-2"
+                type="text"
+              />
+              <p className="mb-1 mt-2">Materi-materi pembelajaran tersebut:</p>
+              <input
+                value={newSubjectMaterials}
+                onChange={(ev) =>
+                  dispatch(setSubjectMaterials(ev.target.value))
+                }
+                className="border w-full rounded-lg p-2"
+                type="text"
+              />
+              <p className="text-sm text-slate-400 mt-2">
+                Pisahkan beberapa materi pembelajaran menggunakan <br /> tanda
+                koma (,)
+              </p>
+              <p className="text-sm text-slate-400">
+                Contoh: <strong>android, intents, material design</strong>
+              </p>
+              <div className="flex flex-row gap-2 justify-end mt-4">
+                <CallbackButton
+                  text="Close"
+                  size="md"
+                  className="bg-red-500 hover:bg-red-400 active:bg-red-700 focus:ring-red-200"
+                  onClick={() => dispatch(closeNewSubjectModal())}
                 />
-                <p className="mb-1 mt-2">
-                  Materi-materi pembelajaran tersebut:
-                </p>
-                <input
-                  value={newSubjectMaterials}
-                  onChange={(ev) =>
-                    dispatch(setSubjectMaterials(ev.target.value))
-                  }
-                  className="border w-full rounded-lg p-2"
-                  type="text"
+                <CallbackButton
+                  text="OK"
+                  size="md"
+                  onClick={() => {
+                    createSubject({
+                      title: newSubjectName,
+                      materials:
+                        newSubjectMaterials.trim().length !== 0
+                          ? newSubjectMaterials.trim().split(",")
+                          : undefined,
+                    });
+                    dispatch(finishNewSubjectModal());
+                  }}
                 />
-                <p className="text-sm text-slate-400 mt-2">
-                  Pisahkan beberapa materi pembelajaran menggunakan <br /> tanda
-                  koma (,)
-                </p>
-                <p className="text-sm text-slate-400">
-                  Contoh: <strong>android, intents, material design</strong>
-                </p>
-                <div className="flex flex-row gap-2 justify-end mt-4">
-                  <CallbackButton
-                    text="Close"
-                    size="md"
-                    className="bg-red-500 hover:bg-red-400 active:bg-red-700 focus:ring-red-200"
-                    onClick={() => dispatch(closeNewSubjectModal())}
-                  />
-                  <CallbackButton
-                    text="OK"
-                    size="md"
-                    onClick={() => {
-                      createSubject({
-                        title: newSubjectName,
-                        materials:
-                          newSubjectMaterials.trim().length !== 0
-                            ? newSubjectMaterials.trim().split(",")
-                            : undefined,
-                      });
-                      dispatch(finishNewSubjectModal());
-                    }}
-                  />
-                </div>
-              </CustomForm>
-            )}
-          />
+              </div>
+            </CustomForm>
+          </Modal>
         </motion.div>
       )}
     </AnimatePresence>

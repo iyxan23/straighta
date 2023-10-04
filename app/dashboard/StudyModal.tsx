@@ -60,60 +60,58 @@ export default function StudyModal() {
           ) : studySessionError ? (
             <>Error ketika membuat sesi belajar: {error}</>
           ) : !data ? (
-            <Modal
-              content={() => <p className="animate-pulse">Loading...</p>}
-            />
+            <Modal>
+              <p className="animate-pulse">Loading...</p>
+            </Modal>
           ) : (
-            <Modal
-              content={() => (
-                <>
-                  <h2 className="text-xl font-bold text-slate-700">
-                    Mulai belajar
-                  </h2>
-                  <p>Pilih materi untuk dipelajari</p>
-                  {data ? (
-                    <select
-                      onChange={(ev) => {
-                        dispatch(
-                          setStartStudyModalMaterialId(Number(ev.target.value)),
-                        );
-                      }}
-                      value={selectedMaterialId}
-                    >
-                      {data.map((s) => (
-                        <option value={s.id} key={s.id}>
-                          {s.title}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <p className="text-slate-700 animate-pulse">Loading</p>
-                  )}
-                  <div className="flex flex-row gap-2 justify-end">
-                    <CallbackButton
-                      text="Close"
-                      size="md"
-                      className="bg-red-500 hover:bg-red-400 active:bg-red-700 focus:ring-red-200"
-                      onClick={() => dispatch(closeStartStudyModal())}
-                    />
-                    <CallbackButton
-                      text="Ok"
-                      size="md"
-                      onClick={() => {
-                        if (!selectedMaterialId) {
-                          return;
-                        }
+            <Modal>
+              <>
+                <h2 className="text-xl font-bold text-slate-700">
+                  Mulai belajar
+                </h2>
+                <p>Pilih materi untuk dipelajari</p>
+                {data ? (
+                  <select
+                    onChange={(ev) => {
+                      dispatch(
+                        setStartStudyModalMaterialId(Number(ev.target.value)),
+                      );
+                    }}
+                    value={selectedMaterialId}
+                  >
+                    {data.map((s) => (
+                      <option value={s.id} key={s.id}>
+                        {s.title}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="text-slate-700 animate-pulse">Loading</p>
+                )}
+                <div className="flex flex-row gap-2 justify-end">
+                  <CallbackButton
+                    text="Close"
+                    size="md"
+                    className="bg-red-500 hover:bg-red-400 active:bg-red-700 focus:ring-red-200"
+                    onClick={() => dispatch(closeStartStudyModal())}
+                  />
+                  <CallbackButton
+                    text="Ok"
+                    size="md"
+                    onClick={() => {
+                      if (!selectedMaterialId) {
+                        return;
+                      }
 
-                        createStudySession({
-                          materialId: selectedMaterialId,
-                          score: 85, // todo: ask the user
-                        });
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-            />
+                      createStudySession({
+                        materialId: selectedMaterialId,
+                        score: 85, // todo: ask the user
+                      });
+                    }}
+                  />
+                </div>
+              </>
+            </Modal>
           )}
         </motion.div>
       )}
