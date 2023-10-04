@@ -1,11 +1,21 @@
+"use client";
+
 import { CustomCard } from "@/components";
 import ArrowUp from "mdi-react/ArrowUpIcon";
 import ArrowRight from "mdi-react/ArrowRightIcon";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function StudyHistoryModal() {
+  const modalOpen = useAppSelector((state) => state.studyHistoryModal.visible);
+  const id = useAppSelector((state) => state.studyHistoryModal.id);
+
   return (
-    <div className="overflow-y-scroll fixed top-1/2 -translate-x-1/2 -translate-y-1/2 left-1/2 w-full h-96 z-30 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white max-w-lg">
-      <h3 className="font-bold text-2xl case text-slate-700">Nama Materi</h3>
+    <div
+      className={`overflow-y-scroll fixed top-1/2 -translate-x-1/2 -translate-y-1/2 left-1/2 w-full h-96 z-30 rounded-lg shadow-md flex flex-col p-6 gap-2 bg-white max-w-lg ${
+        !modalOpen && "hidden"
+      }`}
+    >
+      <h3 className="font-bold text-2xl case text-slate-700">test-{id}</h3>
       <p className="text-slate-400">Nama subjek</p>
       <ul className="space-y-2">
         {Array.from({ length: 3 }).map((_, index) => (

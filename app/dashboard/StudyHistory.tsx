@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useLazyListStudySessionsQuery } from "@/redux/services/studyApi";
 import { useEffect } from "react";
 import HistoryItem from "./StudyHistoryItem";
+import { openStudyHistoryModal } from "@/redux/features/studyHistoryModalSlice";
 
 const LIMIT = 10;
 
@@ -39,7 +40,13 @@ export default function History() {
     return (
       <ul className="space-y-2">
         {data.map((item) => (
-          <HistoryItem key={item.id} studySession={item} onClick={(id) => {}} />
+          <HistoryItem
+            key={item.id}
+            studySession={item}
+            onClick={(id) => {
+              dispatch(openStudyHistoryModal(id));
+            }}
+          />
         ))}
         {isFetching && (
           <p className="animate-pulse text-slate-600 w-full text-center">

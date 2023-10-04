@@ -4,6 +4,7 @@ import studyHistoryOffsetSlice from "./features/studyHistoryOffsetSlice";
 import subjectOffsetSlice from "./features/subjectOffsetSlice";
 import startStudyModalSlice from "./features/startStudyModalSlice";
 import studySlice from "./features/studySlice";
+import studyHistoryModal from './features/studyHistoryModalSlice';
 
 import { subjectApi } from "./services/subjectApi";
 import { configureStore } from "@reduxjs/toolkit";
@@ -18,6 +19,7 @@ export const store = configureStore({
     study: studySlice,
     subjectOffset: subjectOffsetSlice,
     studyHistoryOffset: studyHistoryOffsetSlice,
+    studyHistoryModal: studyHistoryModal,
     [subjectApi.reducerPath]: subjectApi.reducer,
     [studyApi.reducerPath]: studyApi.reducer,
     [materialApi.reducerPath]: materialApi.reducer,
