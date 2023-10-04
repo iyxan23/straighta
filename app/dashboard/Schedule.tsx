@@ -26,7 +26,7 @@ const weekdays = [
   "Sabtu",
 ];
 
-export default function Schedule() {
+export default function Schedule(): JSX.Element {
   const nowDate = useRef(new Date());
   const { data: schedule, error } = useGetScheduleQuery({
     time: nowDate.current.getTime(),
@@ -47,77 +47,78 @@ export default function Schedule() {
     };
   });
 
-  return (
-    schedule && (
-      <>
-        {schedule.map((s, index) => {
-          const nowTime = new Date(timeMs);
-          const seconds = timeMs / 1000 - nowTime.getTimezoneOffset() * 60;
-          const dayOfTheWeek = new Date().getUTCDay();
+  return error ? (
+    <p className="text-red-500 font-bold">Err: {JSON.stringify(error)}</p>
+  ) : schedule ? (
+    <>
+      {schedule.map((s, index) => {
+        const nowTime = new Date(timeMs);
+        const seconds = timeMs / 1000 - nowTime.getTimezoneOffset() * 60;
+        const dayOfTheWeek = new Date().getUTCDay();
 
-          // const completedSchedules = s.scheduled.filter((t) =>
-          //   s.completed.includes(t.text)
-          // );
+        // const completedSchedules = s.scheduled.filter((t) =>
+        //   s.completed.includes(t.text)
+        // );
 
-          function isScheduleDismissed(
-            block: [number, number],
-            dayOfTheWeek: number,
-            timeBlockDayOfTheWeek: number,
-          ): boolean {
-            const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
-            const secsFromMonday = dayOfTheWeek * SECONDS_IN_ONE_DAY;
-            const secsFromTimeBlock =
-              timeBlockDayOfTheWeek * SECONDS_IN_ONE_DAY;
+        function isScheduleDismissed(
+          block: [number, number],
+          dayOfTheWeek: number,
+          timeBlockDayOfTheWeek: number,
+        ): boolean {
+          const SECONDS_IN_ONE_DAY = 60 * 60 * 24;
+          const secsFromMonday = dayOfTheWeek * SECONDS_IN_ONE_DAY;
+          const secsFromTimeBlock = timeBlockDayOfTheWeek * SECONDS_IN_ONE_DAY;
 
-            return secsFromTimeBlock + block[1] < secsFromMonday + seconds;
-          }
+          return secsFromTimeBlock + block[1] < secsFromMonday + seconds;
+        }
 
-          return (
-            <ScheduleItem
-              weekday={weekdays[index]}
-              scheduledRanges={s.map((i) => ({
+        return (
+          <ScheduleItem
+            weekday={weekdays[index]}
+            scheduledRanges={s.map((i) => ({
+              text: "test",
+              range: [i.startRelativeTimestamp, i.endRelativeTimestamp],
+            }))}
+            // completedRanges={completedSchedules}
+            completedRanges={[]} // todo: include completed schedules in api
+            dismissedRanges={s
+              .filter((i) =>
+                // !completedSchedules.includes(t) &&
+                isScheduleDismissed(
+                  [i.startRelativeTimestamp, i.endRelativeTimestamp],
+                  dayOfTheWeek,
+                  index,
+                ),
+              )
+              .map((i) => ({
                 text: "test",
                 range: [i.startRelativeTimestamp, i.endRelativeTimestamp],
               }))}
-              // completedRanges={completedSchedules}
-              completedRanges={[]} // todo: include completed schedules in api
-              dismissedRanges={s
-                .filter((i) =>
-                  // !completedSchedules.includes(t) &&
-                  isScheduleDismissed(
-                    [i.startRelativeTimestamp, i.endRelativeTimestamp],
-                    dayOfTheWeek,
-                    index,
-                  ),
-                )
-                .map((i) => ({
-                  text: "test",
-                  range: [i.startRelativeTimestamp, i.endRelativeTimestamp],
-                }))}
-              cursor={
-                dayOfTheWeek == index
-                  ? {
-                      position: seconds,
-                      text: nowTime.toLocaleTimeString(undefined, {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                      }),
-                    }
-                  : undefined
-              }
-              blocked={
-                dayOfTheWeek == index
-                  ? [sec("00:00"), seconds]
-                  : dayOfTheWeek > index
-                  ? [sec("00:00"), sec("24:00")]
-                  : undefined
-              }
-              key={index}
-            />
-          );
-        })}
-      </>
-    )
+            cursor={
+              dayOfTheWeek == index
+                ? {
+                    position: seconds,
+                    text: nowTime.toLocaleTimeString(undefined, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    }),
+                  }
+                : undefined
+            }
+            blocked={
+              dayOfTheWeek == index
+                ? [sec("00:00"), seconds]
+                : dayOfTheWeek > index
+                ? [sec("00:00"), sec("24:00")]
+                : undefined
+            }
+            key={index}
+          />
+        );
+      })}
+    </>
+  ) : (
+    <p className="text-slate-500 animate-pulse">Loading schedule...</p>
   );
 }
