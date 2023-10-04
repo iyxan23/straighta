@@ -21,6 +21,7 @@ export default function DashboardMainPage() {
         </div>
       </div>
       <StudyModal />
+      <StudyHistoryModal />
     </DashboardAnimatePresence>
   );
 }

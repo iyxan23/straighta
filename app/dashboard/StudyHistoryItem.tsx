@@ -15,8 +15,10 @@ import { classNameOfScore } from "@/lib/utils";
 
 export default function HistoryItem({
   studySession,
+  onClick,
 }: {
   studySession: StudySession;
+  onClick: (id: number) => void;
 }) {
   const elemRef = useRef(null);
   const {
@@ -66,6 +68,7 @@ export default function HistoryItem({
     <li
       ref={elemRef}
       key={id}
+      onClick={() => onClick(id)}
       className="flex justify-between items-center gap-2"
     >
       {materialError ? (
