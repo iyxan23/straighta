@@ -1,3 +1,4 @@
+import { subjectsAllAvgScore } from "./../../../../prisma/queries/subject";
 import {
   subjectListGetRequest,
   type SubjectListGetResponseResult,
@@ -9,7 +10,7 @@ import prisma from "@/prisma";
 import { searchParamsToObject } from "@/lib/utils";
 
 export async function GET(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<NextResponse<SubjectListGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const data = searchParamsToObject(req.nextUrl.searchParams);
@@ -24,12 +25,10 @@ export async function GET(
 
   const { limit, offset } = result.data;
 
-  const subjects = await prisma.subject.findMany({
-    skip: offset,
-    take: limit,
-    where: {
-      owner_username: username,
-    },
+  const subjects = await subjectsAllAvgScore({
+    limit,
+    offset,
+    username,
   });
 
   return NextResponse.json({
@@ -38,7 +37,7 @@ export async function GET(
       return {
         id: s.id,
         title: s.title,
-        overallScore: 89, // todo
+        overallScore: Number(s.avg),
       };
     }),
   });

@@ -9,9 +9,10 @@ import { HEADER_TOKEN_USERNAME } from "@/middlewareHeaders";
 import prisma from "@/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { searchParamsToObject } from "@/lib/utils";
+import { subjectWithMaterialIdAndAvgScore } from "@/prisma/queries/subject";
 
 export async function GET(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<NextResponse<SubjectGetResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await searchParamsToObject(req.nextUrl.searchParams);
@@ -23,23 +24,15 @@ export async function GET(
         status: "err",
         reason: data.error.message,
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   const { id } = data.data;
-  const subject = await prisma.subject.findFirst({
-    where: {
-      id,
-      owner_username: username,
-    },
-    include: {
-      materials: {
-        select: {
-          id: true,
-        },
-      },
-    },
+
+  const [subject] = await subjectWithMaterialIdAndAvgScore({
+    subjectId: id,
+    username,
   });
 
   if (!subject) {
@@ -53,14 +46,14 @@ export async function GET(
     status: "ok",
     payload: {
       title: subject.title,
-      materials: subject.materials.map(({ id }) => id),
-      overallScore: 84.3, // todo
+      materials: subject.material_ids,
+      overallScore: Number(subject.avg),
     },
   });
 }
 
 export async function POST(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<NextResponse<SubjectPostResponseResult>> {
   const username = req.headers.get(HEADER_TOKEN_USERNAME)!;
   const payload = await subjectPostRequest.safeParseAsync(await req.json());
@@ -71,7 +64,7 @@ export async function POST(
         status: "err",
         reason: payload.error.message,
       }),
-      { status: 400 }
+      { status: 400 },
     );
   }
 
