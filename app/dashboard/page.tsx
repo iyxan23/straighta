@@ -18,11 +18,11 @@ export default function DashboardMainPage() {
           <h2 className="font-bold text-2xl text-slate-700 mb-4">Riwayat</h2>
           <div className="flex flex-col w-full gap-4">
             <StudyHistory />
-            <StudyHistoryModal />
           </div>
         </div>
       </div>
       <StudyModal />
+      <StudyHistoryModal />
     </DashboardAnimatePresence>
   );
 }

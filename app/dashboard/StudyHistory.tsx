@@ -39,7 +39,7 @@ export default function History() {
     return (
       <ul className="space-y-2">
         {data.map((item) => (
-          <HistoryItem key={item.id} studySession={item} />
+          <HistoryItem key={item.id} studySession={item} onClick={(id) => {}} />
         ))}
         {isFetching && (
           <p className="animate-pulse text-slate-600 w-full text-center">
