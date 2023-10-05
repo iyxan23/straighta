@@ -18,24 +18,20 @@ export default function StudyHistoryModal() {
   return (
     modalOpen && (
       <motion.div
-        initial={{ opacity: 0, scale: 1.05 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 1.05 }}
-        transition={{ ease: "easeInOut" }}
         key={"studyModal"}
         className="z-50 fixed top-0 bottom-0 w-screen h-screen bg-black bg-opacity-10 backdrop-blur-sm flex justify-center items-center"
       >
-        <Modal className='overflow-y-scroll max-h-96'>
+        <Modal className="overflow-y-scroll max-h-96">
           <hgroup className="flex items-center justify-between w-full">
             <h3 className="font-bold text-2xl case text-slate-700">
               Study History-{id}
             </h3>
-            <button
+            <motion.button
               className="bg-rose-500 hover:bg-rose-500/70 text-white rounded-md p-[2px]"
               onClick={() => dispatch(closeStudyHistoryModal())}
             >
               <CloseIcon />
-            </button>
+            </motion.button>
           </hgroup>
           <p className="text-slate-400">Nama subjek</p>
           <ul className="space-y-2">
@@ -52,7 +48,10 @@ export default function StudyHistoryModal() {
                   )}
                   <div className="bg-neutral-300 w-[2px] h-full mx-auto" />
                 </div>
-                <CustomCard className="p-4 flex-1 flex justify-between items-center">
+                <CustomCard
+                  className="p-4 flex-1 flex justify-between items-center"
+                  hoverable
+                >
                   <div>
                     <p className="font-semibold">08:03 - 09:15</p>
                     <p>Waktu belajar: 47 menit</p>
