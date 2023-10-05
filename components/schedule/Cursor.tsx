@@ -11,7 +11,7 @@ export default function Cursor({
     <>
       <div
         className="
-          absolute w-full bg-purple-500 z-30
+          absolute w-full bg-purple-500 z-20
 
           before:content-[''] before:absolute before:left-0 before:top-0 before:bottom-0
           before:transform before:-translate-y-[2px] before:-translate-x-1/2 before:w-2 before:h-2
@@ -27,7 +27,7 @@ export default function Cursor({
       ></div>
       <div
         className="
-          absolute left-1/2 transform -translate-x-1/2 text-sm text-center text-white
+          absolute left-1/2 transform -translate-x-1/2 text-sm text-center text-white z-20
           bg-purple-500 px-2 py-1 rounded-full shadow-md font-bold
           hover:scale-105
           transition-all cursor-pointer"

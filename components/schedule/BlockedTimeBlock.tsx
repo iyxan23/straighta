@@ -13,13 +13,15 @@ export default function MaterialTimeBlock({
           w-full absolute text-white text-sm
           flex flex-col justify-center
           items-center text-opacity-75
-          bg-purple-300 opacity-50 z-10
+          bg-purple-300 opacity-50
           text-center
           leading-4
           transition-all rounded-sm`}
       style={{
         height: `${
-          ((endRelativeTimestamp - startRelativeTimestamp) / MAX_SCHEDULE_RANGE) * 100
+          ((endRelativeTimestamp - startRelativeTimestamp) /
+            MAX_SCHEDULE_RANGE) *
+          100
         }%`,
         bottom: `${(startRelativeTimestamp / MAX_SCHEDULE_RANGE) * 100}%`,
       }}
