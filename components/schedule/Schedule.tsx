@@ -122,7 +122,7 @@ export default function Schedule(): JSX.Element {
     <>
       {Array.from({ length: 7 }).map((_, index) => (
         <ScheduleItem key={index} weekday={weekdays[index]}>
-          Loading...
+          <div className="w-full h-full bg-slate-200 animate-pulse" />
         </ScheduleItem>
       ))}
     </>
