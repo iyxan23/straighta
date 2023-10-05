@@ -8,6 +8,7 @@ import BlockedTimeBlock from "./BlockedTimeBlock";
 import Cursor from "./Cursor";
 import MaterialTimeBlock from "./MaterialTimeBlock";
 import ScheduleItem from "./ScheduleItem";
+import ScheduleItemLoading from "./ScheduleItemLoading";
 
 export const MAX_SCHEDULE_RANGE = 86400; // seconds in a day
 
@@ -99,7 +100,7 @@ export default function Schedule(): JSX.Element {
             {/* Render schedules based on their status */}
             {scheduleDay.map((scheduleDayItem) => (
               <MaterialTimeBlock
-                key={scheduleDayItem.materialId}
+                key={`${scheduleDayItem.materialId}/${scheduleDayItem.startRelativeTimestamp}-${scheduleDayItem.endRelativeTimestamp}`}
                 materialId={scheduleDayItem.materialId}
                 startRelativeTimestamp={scheduleDayItem.startRelativeTimestamp}
                 endRelativeTimestamp={scheduleDayItem.endRelativeTimestamp}
@@ -122,7 +123,7 @@ export default function Schedule(): JSX.Element {
     <>
       {Array.from({ length: 7 }).map((_, index) => (
         <ScheduleItem key={index} weekday={weekdays[index]}>
-          <div className="w-full h-full bg-slate-200 animate-pulse" />
+          <ScheduleItemLoading index={index} />
         </ScheduleItem>
       ))}
     </>

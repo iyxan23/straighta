@@ -10,6 +10,13 @@ const config = {
       gridTemplateRows: {
         "main-layout": "auto min-content",
       },
+      keyframes: {
+        shimmer: {
+          "100%": {
+            transform: "translateY(100%)",
+          },
+        },
+      },
     },
   },
   plugins: ["prettier-plugin-tailwindcss"],
