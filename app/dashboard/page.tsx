@@ -1,12 +1,15 @@
 import DashboardAnimatePresence from "./DashboardAnimatePresence";
-import Schedule from "./Schedule";
+import Schedule from "../../components/schedule/Schedule";
 import StudyModal from "./StudyModal";
 import StudyHistory from "./StudyHistory";
 
 export default function DashboardMainPage() {
   return (
     <DashboardAnimatePresence>
-      <div key="main" className="flex flex-col md:flex-row md:h-[calc(100%-70px)] bg-slate-100 overflow-y-scroll md:overflow-y-auto">
+      <div
+        key="main"
+        className="flex flex-col md:flex-row md:h-[calc(100%-70px)] bg-slate-100 overflow-y-scroll md:overflow-y-auto"
+      >
         <div className="flex flex-col gap-4 w-full bg-white p-8 md:rounded-r-3xl shadow-lg md:max-h-full">
           <h2 className="font-bold text-2xl text-slate-700">Jadwal</h2>
           <div className="flex flex-col md:flex-row h-auto md:h-full w-full gap-2">
