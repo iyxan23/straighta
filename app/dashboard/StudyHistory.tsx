@@ -37,7 +37,7 @@ export default function History() {
     const moreData = data.length < offset + LIMIT;
 
     return (
-      <ul className="space-y-2">
+      <ul className="space-y-2 flex flex-col">
         {data.map((item) => (
           <HistoryItem key={item.id} studySession={item} onClick={(id) => {}} />
         ))}
@@ -51,6 +51,7 @@ export default function History() {
             onClick={() => {
               dispatch(addOffset(LIMIT));
             }}
+            className='bg-sky-500 text-white rounded-full px-4 py-2 mx-auto'
           >
             Muat lebih
           </button>
