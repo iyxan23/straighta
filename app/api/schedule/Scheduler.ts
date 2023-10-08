@@ -1,3 +1,7 @@
+import {
+  lowestMaterialScoreDiffs,
+  lowestMaterialScoreAvgs,
+} from "./../../../prisma/queries/scheduler";
 import prisma from "@/prisma";
 import setDay from "date-fns/setDay";
 import startOfDay from "date-fns/startOfDay";
@@ -54,33 +58,51 @@ export default class Scheduler {
     // check if there is a schedule
     const existingSchedule = await this.retrieveExistingSchedule();
     if (existingSchedule) {
-      const schedule = existingSchedule.days.map((d) =>
-        d.time_blocks.map((tb) => ({
-          materialId: tb.material_id,
-          startRelativeTimestamp: tb.start_rel_timestamp,
-          endRelativeTimestamp: tb.end_rel_timestamp,
-        })),
-      );
-
-      if (schedule.length != 7) {
-        // probably brekover
-        throw new Error("schedule is not of length 7");
-      }
-
-      return [
-        schedule[0],
-        schedule[1],
-        schedule[2],
-        schedule[3],
-        schedule[4],
-        schedule[5],
-        schedule[6],
-      ];
+      return scheduleFromDatabase(existingSchedule);
     }
 
-    // throw new Error("Not implemented");
+    const lowestScoreDiffs = await lowestMaterialScoreDiffs({
+      afterDate: this.startOfTheWeek,
+    });
+    const lowestScores = await lowestMaterialScoreAvgs({
+      limit: 10,
+      offset: 0,
+    });
+
+    console.log(lowestScoreDiffs);
+    console.log(lowestScores)
+
     return testData;
   }
+}
+
+function scheduleFromDatabase(
+  dbSchedule: DbSchedule & {
+    days: (DbScheduleDay & { time_blocks: DbScheduleTimeBlock[] })[];
+  },
+): Schedule {
+  const schedule = dbSchedule.days.map((d) =>
+    d.time_blocks.map((tb) => ({
+      materialId: tb.material_id,
+      startRelativeTimestamp: tb.start_rel_timestamp,
+      endRelativeTimestamp: tb.end_rel_timestamp,
+    })),
+  );
+
+  if (schedule.length != 7) {
+    // probably brekover
+    throw new Error("schedule is not of length 7");
+  }
+
+  return [
+    schedule[0],
+    schedule[1],
+    schedule[2],
+    schedule[3],
+    schedule[4],
+    schedule[5],
+    schedule[6],
+  ];
 }
 
 const testData: Schedule = [
