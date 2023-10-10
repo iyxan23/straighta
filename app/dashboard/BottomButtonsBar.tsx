@@ -30,5 +30,8 @@ export default function BottomButtonsBar() {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
 
-  return data[pathname](dispatch);
+  if (data[pathname]) {
+    return data[pathname](dispatch);
+  }
+  return <></>
 }
