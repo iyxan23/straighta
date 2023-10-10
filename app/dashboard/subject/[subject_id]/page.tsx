@@ -3,7 +3,7 @@ import prisma from "@/prisma";
 import { materialsAllAvgScore } from "@/prisma/queries/material";
 import { notFound } from "next/navigation";
 
-export default async function SelectedSubjectPage({
+export default async function SubjectDetailPage({
   params: { subject_id },
 }: {
   params: { subject_id: string };
