@@ -16,6 +16,15 @@ import {
 } from "@prisma/client";
 import { sec } from "@/lib/utils";
 
+export const FULL_SCORE = 100;
+
+// temporary fixed schedule
+// later implementation will feature dynamic schedule
+// using study intensity
+const SCHEDULE_ITEM_MS = 3 * 60 * 60 * 1000; // 3 hours
+const SCHEDULE_COUNT = 7; // 7 days a week
+const SCHEDULE_STARTS_AT = 16 * 60 * 60 * 1000; // 16:00
+
 // The one and only, scheduler
 // This is made as a class so it's easier to pass things around
 // Parameters to be passed:
@@ -33,6 +42,13 @@ export default class Scheduler {
     this.startOfTheWeek = startOfDay(setDay(now, 0));
   }
 
+  // floating point from 0 to 1
+  private async retrieveStudyIntensity(): Promise<number> {
+    // todo: retrieve from database
+    return 0.8;
+  }
+
+  /*
   // in ms
   private async retrievePlannedTimeBlocks(): Promise<ShallowTimeBlockWeek> {
     // todo: do something with study intensity
@@ -55,6 +71,7 @@ export default class Scheduler {
       perDay(),
     ];
   }
+  */
 
   private async retrieveExistingSchedule(): Promise<
     | (DbSchedule & {
@@ -97,10 +114,13 @@ export default class Scheduler {
       username: this.username,
     });
 
+    /*
     const plannedTimeBlocks = await this.retrievePlannedTimeBlocks();
+    */
+    const studyIntensity = await this.retrieveStudyIntensity();
 
     // calculate the time needed of each materials
-    await Promise.all(
+    const lowestScoreDiffWeights = await Promise.all(
       lowestScoreDiffs.map(async (d) => {
         const [
           [{ score_growth_over_time }],
@@ -127,14 +147,133 @@ export default class Scheduler {
         console.log(`score growth over time: ${score_growth_over_time}`);
         console.log(`peak score: ${peakScore}`);
         console.log(`avg score: ${avg}`);
-        const timeNeeded = (peakScore - avg) * score_growth_over_time;
+        // todo: fix negative growth :(
+        const timeNeeded = (peakScore - avg) / score_growth_over_time;
+        // time needed is in milliseconds
         console.log(`time needed: ${timeNeeded}`);
+        const weight = timeNeeded / SCHEDULE_ITEM_MS;
 
-        return { ...d, timeNeeded };
+        return { materialId: d.material_id, weight };
       }),
     );
 
-    return testData(150);
+    const lowestScoreWeights = await Promise.all(
+      lowestScores.map(async (d) => {
+        const [{ score_growth_over_time }] =
+          await materialGrowthOverTimeOnStudySession({
+            materialId: d.id,
+            username: this.username,
+          });
+
+        const target = (FULL_SCORE - d.avg_score) * studyIntensity;
+        // todo: fix negative growth :(
+        const timeNeeded = target / score_growth_over_time;
+        const weight = timeNeeded / SCHEDULE_ITEM_MS;
+
+        return { materialId: d.id, weight };
+      }),
+    );
+
+    // combine them
+    const materialCandidates = [
+      ...lowestScoreDiffWeights,
+      ...lowestScoreWeights,
+    ];
+
+    // sort them by ascending order
+    materialCandidates.sort((a, b) => b.weight - a.weight);
+    console.log(materialCandidates);
+
+    // choose them
+    let chosenMaterials: { materialId: number; weight: number }[] = [];
+    let currentWeight = 0;
+
+    materialCandidates.forEach((candidate) => {
+      if (currentWeight >= SCHEDULE_COUNT) {
+        // we got the right spot!
+        return;
+      }
+
+      console.log(candidate.weight);
+      currentWeight += candidate.weight;
+      chosenMaterials.push({
+        materialId: candidate.materialId,
+        weight: candidate.weight,
+      });
+    });
+
+    console.log(chosenMaterials);
+
+    // done! normalize their weights to they would match the desired weight
+    chosenMaterials = chosenMaterials.map(({ materialId, weight }) => ({
+      materialId,
+      weight: (weight / currentWeight) * SCHEDULE_COUNT,
+    }));
+    console.log("bbb");
+
+    // todo: OOP the hell code below me
+    // we've got our materials to be scheduled!
+    // turn them into a real schedule
+    let scheduleResult: ScheduleWeek = [[], [], [], [], [], [], []];
+
+    let usedWeightInDay = 0;
+
+    let currentDay = 0;
+    let currentMaterialIdx = 0;
+
+    while (true) {
+      console.log("whiel");
+      console.log(scheduleResult);
+      console.log(`today is ${currentDay}`);
+      const currentMaterial = chosenMaterials[currentMaterialIdx];
+      const minimumMaterialTime = currentMaterial.weight * SCHEDULE_ITEM_MS;
+      console.log("aftere dez");
+
+      if (minimumMaterialTime > 1 - usedWeightInDay) {
+        scheduleResult[currentDay].push({
+          materialId: currentMaterial.materialId,
+          startRelativeTimestamp: SCHEDULE_STARTS_AT + usedWeightInDay,
+          endRelativeTimestamp:
+            SCHEDULE_STARTS_AT +
+            usedWeightInDay +
+            (1 - usedWeightInDay) * SCHEDULE_ITEM_MS,
+        });
+        const weightForTheNextDay = minimumMaterialTime - (1 - usedWeightInDay);
+
+        usedWeightInDay = 0;
+        currentDay++;
+
+        if (currentDay >= 7) {
+          // warning: material candidates summed up into a value more than 7
+          break;
+        }
+
+        // put the rest for the next day
+        scheduleResult[currentDay].push({
+          materialId: currentMaterial.materialId,
+          startRelativeTimestamp: SCHEDULE_STARTS_AT,
+          endRelativeTimestamp:
+            SCHEDULE_STARTS_AT + weightForTheNextDay * SCHEDULE_ITEM_MS,
+        });
+        usedWeightInDay = weightForTheNextDay;
+      } else {
+        // we're fine, add it
+        scheduleResult[currentDay].push({
+          materialId: currentMaterial.materialId,
+          startRelativeTimestamp: SCHEDULE_STARTS_AT + usedWeightInDay,
+          endRelativeTimestamp:
+            SCHEDULE_STARTS_AT + usedWeightInDay + minimumMaterialTime,
+        });
+      }
+
+      if (currentDay >= 7) {
+        break;
+      }
+
+      currentMaterialIdx++;
+    }
+
+    return scheduleResult;
   }
 }
 
