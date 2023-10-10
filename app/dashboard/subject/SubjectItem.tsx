@@ -5,6 +5,7 @@ import { classNameOfScore } from "@/lib/utils";
 import { useLazyListMaterialsQuery } from "@/redux/services/materialApi";
 import { useEffect, useRef } from "react";
 import SubjectItemMaterials from "./SubjectItemMaterials";
+import { usePathname } from 'next/navigation';
 
 export default function SubjectItem({
   subjectId,
@@ -17,6 +18,9 @@ export default function SubjectItem({
 }): JSX.Element {
   const elemRef = useRef(null);
   const [fetchMaterials, { data, error }] = useLazyListMaterialsQuery();
+
+  const pathname = usePathname()
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -42,7 +46,7 @@ export default function SubjectItem({
   });
 
   return (
-    <CustomCard ref={elemRef} key={subjectId} className="group p-8" hoverable>
+    <CustomCard ref={elemRef} key={subjectId} className="group p-8" hoverable href={`${pathname}/${subjectId}`}>
       <div className="flex flex-row justify-between">
         <h2 className="text-xl font-bold text-slate-600">{title}</h2>
         <p className={`text-lg font-semibold ${classNameOfScore(overallScore)}`}>{overallScore}%</p>
