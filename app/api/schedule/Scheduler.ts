@@ -1,6 +1,9 @@
 import {
   lowestMaterialScoreDiffs,
   lowestMaterialScoreAvgs,
+  materialGrowthOverTimeOnStudySession,
+  lastHighestScoreOfMaterial,
+  avgScoreOfMaterial,
 } from "./../../../prisma/queries/scheduler";
 import prisma from "@/prisma";
 import setDay from "date-fns/setDay";
@@ -30,6 +33,29 @@ export default class Scheduler {
     this.startOfTheWeek = startOfDay(setDay(now, 0));
   }
 
+  // in ms
+  private async retrievePlannedTimeBlocks(): Promise<ShallowTimeBlockWeek> {
+    // todo: do something with study intensity
+    const DURATION = 2 * 60 * 60 * 1000; // 2 hours
+
+    const perDay = (): ShallowTimeBlockDay => [
+      {
+        startRelativeTimestamp: sec("16:00"),
+        endRelativeTimestamp: sec("16:00") + DURATION,
+      },
+    ];
+
+    return [
+      perDay(),
+      perDay(),
+      perDay(),
+      perDay(),
+      perDay(),
+      perDay(),
+      perDay(),
+    ];
+  }
+
   private async retrieveExistingSchedule(): Promise<
     | (DbSchedule & {
         days: (DbScheduleDay & { time_blocks: DbScheduleTimeBlock[] })[];
@@ -54,7 +80,7 @@ export default class Scheduler {
   }
 
   // Creates a schedule for the week passed on now
-  async createSchedule(): Promise<Schedule> {
+  async createSchedule(): Promise<ScheduleWeek> {
     // check if there is a schedule
     const existingSchedule = await this.retrieveExistingSchedule();
     if (existingSchedule) {
@@ -63,16 +89,52 @@ export default class Scheduler {
 
     const lowestScoreDiffs = await lowestMaterialScoreDiffs({
       afterDate: this.startOfTheWeek,
+      username: this.username,
     });
     const lowestScores = await lowestMaterialScoreAvgs({
       limit: 10,
       offset: 0,
+      username: this.username,
     });
 
-    console.log(lowestScoreDiffs);
-    console.log(lowestScores)
+    const plannedTimeBlocks = await this.retrievePlannedTimeBlocks();
 
-    return testData;
+    // calculate the time needed of each materials
+    await Promise.all(
+      lowestScoreDiffs.map(async (d) => {
+        const [
+          [{ score_growth_over_time }],
+          [{ score: peakScore }],
+          [{ avg }],
+        ] = await Promise.all([
+          materialGrowthOverTimeOnStudySession({
+            materialId: d.material_id,
+            username: this.username,
+          }),
+          lastHighestScoreOfMaterial({
+            materialId: d.material_id,
+            username: this.username,
+          }),
+          avgScoreOfMaterial({
+            materialId: d.material_id,
+            username: this.username,
+          }),
+        ]);
+
+        console.log(`================`);
+        console.log(`calculating time required for mid$${d.material_id}`);
+        console.log(d);
+        console.log(`score growth over time: ${score_growth_over_time}`);
+        console.log(`peak score: ${peakScore}`);
+        console.log(`avg score: ${avg}`);
+        const timeNeeded = (peakScore - avg) * score_growth_over_time;
+        console.log(`time needed: ${timeNeeded}`);
+
+        return { ...d, timeNeeded };
+      }),
+    );
+
+    return testData(150);
   }
 }
 
@@ -80,7 +142,7 @@ function scheduleFromDatabase(
   dbSchedule: DbSchedule & {
     days: (DbScheduleDay & { time_blocks: DbScheduleTimeBlock[] })[];
   },
-): Schedule {
+): ScheduleWeek {
   const schedule = dbSchedule.days.map((d) =>
     d.time_blocks.map((tb) => ({
       materialId: tb.material_id,
@@ -105,75 +167,81 @@ function scheduleFromDatabase(
   ];
 }
 
-const testData: Schedule = [
+const testData = (materialId: number): ScheduleWeek => [
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("18:00"),
       endRelativeTimestamp: sec("20:00"),
     },
   ],
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("18:00"),
       endRelativeTimestamp: sec("20:00"),
     },
   ],
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("18:00"),
       endRelativeTimestamp: sec("20:00"),
     },
   ],
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("18:00"),
       endRelativeTimestamp: sec("20:00"),
     },
   ],
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("18:00"),
       endRelativeTimestamp: sec("20:00"),
     },
   ],
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("18:00"),
       endRelativeTimestamp: sec("20:00"),
     },
   ],
   [
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("08:15"),
       endRelativeTimestamp: sec("10:15"),
     },
     {
-      materialId: 1437,
+      materialId,
       startRelativeTimestamp: sec("16:00"),
       endRelativeTimestamp: sec("18:00"),
     },
   ],
 ];
 
-export type Schedule = [
-  ScheduleDay,
-  ScheduleDay,
-  ScheduleDay,
-  ScheduleDay,
-  ScheduleDay,
-  ScheduleDay,
-  ScheduleDay,
-];
+function fillShallowTimeBlock(
+  shallow: ShallowTimeBlock,
+  materialId: number,
+): ScheduleTimeBlock {
+  return {
+    ...shallow,
+    materialId,
+  };
+}
 
+type SevenTimes<T> = [T, T, T, T, T, T, T];
+
+type ShallowTimeBlock = Omit<ScheduleTimeBlock, "materialId">;
+type ShallowTimeBlockDay = ShallowTimeBlock[];
+type ShallowTimeBlockWeek = SevenTimes<ShallowTimeBlockDay>;
+
+export type ScheduleWeek = SevenTimes<ScheduleDay>;
 export type ScheduleDay = ScheduleTimeBlock[];
-
 export type ScheduleTimeBlock = {
   materialId: number;
   startRelativeTimestamp: number;

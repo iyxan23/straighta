@@ -278,24 +278,6 @@ async function main() {
     },
   });
 
-  console.log(`🌱 [I] username: ${user.username}, password: ${PASSWORD}\n`);
-  prisma.subject.create({
-    data: {
-      title: "duarr",
-      owner_username: user.username,
-      materials: {
-        createMany: {
-          data: [
-            {
-              title: "s",
-              owner_username: "asdasd",
-            },
-          ],
-        },
-      },
-    },
-  });
-
   // create materials and its subjects
   await Promise.all(
     SUBJECT_DATASET.map((s) =>
@@ -323,8 +305,8 @@ async function main() {
       from: sub(new Date(), { months: 4 }),
       to: sub(new Date(), { days: 1 }),
       count: {
-        min: 30,
-        max: 80,
+        min: 300,
+        max: 500,
       },
     })
     .map((date) => ({
@@ -347,6 +329,7 @@ async function main() {
                 start: from,
                 conclusion: {
                   create: {
+                    username: user.username,
                     end: to,
                     study_time: (8 / 10) * (to.getTime() - from.getTime()),
                     break_time: (2 / 10) * (to.getTime() - from.getTime()),
@@ -362,7 +345,9 @@ async function main() {
               console.log(
                 `🌱 [I] new StudySesion ${res.id}: with material ${res.material_id}`,
               );
-              console.log(`       score -> before: ${res.before_score}, after: ${res.conclusion?.after_score}`);
+              console.log(
+                `       score -> before: ${res.before_score}, after: ${res.conclusion?.after_score}`,
+              );
               console.log(`       from ${formatRFC7231(res.start)}`);
               console.log(
                 `       to   ${
@@ -374,6 +359,7 @@ async function main() {
     ),
   );
 
+  console.log(`🌱 [I] username: ${user.username}, password: ${PASSWORD}\n`);
   console.log(`🌱 [I] total ${sessions.length}`);
 }
 
