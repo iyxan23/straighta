@@ -11,9 +11,14 @@ const config = {
         "main-layout": "auto min-content",
       },
       keyframes: {
-        shimmer: {
+        "shimmer-y": {
           "100%": {
             transform: "translateY(100%)",
+          },
+        },
+        "shimmer-x": {
+          "100%": {
+            transform: "translateX(100%)",
           },
         },
       },
