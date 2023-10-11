@@ -6,7 +6,8 @@ import {
   avgScoreOfMaterial,
 } from "./../../../prisma/queries/scheduler";
 import prisma from "@/prisma";
-import setDay from "date-fns/setDay";
+import subWeeks from "date-fns/subWeeks";
+import startOfWeek from "date-fns/startOfWeek";
 import startOfDay from "date-fns/startOfDay";
 import endOfDay from "date-fns/endOfDay";
 import {
@@ -15,6 +16,7 @@ import {
   ScheduleTimeBlock as DbScheduleTimeBlock,
 } from "@prisma/client";
 import { sec } from "@/lib/utils";
+import ScheduleSpreader from "./ScheduleSpreader";
 
 export const FULL_SCORE = 100;
 
@@ -25,13 +27,16 @@ const SCHEDULE_ITEM_MS = 3 * 60 * 60 * 1000; // 3 hours
 const SCHEDULE_COUNT = 7; // 7 days a week
 const SCHEDULE_STARTS_AT = 16 * 60 * 60 * 1000; // 16:00
 
+// any weight lower than this weight will be discarded
+export const DISCARD_WEIGHT_TRESHOLD = 0.5;
+
 // The one and only, scheduler
 // This is made as a class so it's easier to pass things around
 // Parameters to be passed:
 //  -
 export default class Scheduler {
   private now: Date;
-  private startOfTheWeek: Date;
+  private startOfLastWeek: Date;
   private username: string;
 
   // the now paramter can be of any time range
@@ -39,7 +44,7 @@ export default class Scheduler {
   constructor(username: string, now: Date) {
     this.now = now;
     this.username = username;
-    this.startOfTheWeek = startOfDay(setDay(now, 0));
+    this.startOfLastWeek = startOfWeek(subWeeks(now, 1));
   }
 
   // floating point from 0 to 1
@@ -82,8 +87,8 @@ export default class Scheduler {
     return prisma.schedule.findFirst({
       where: {
         first_day_timestamp: {
-          gte: startOfDay(this.startOfTheWeek),
-          lte: endOfDay(this.startOfTheWeek),
+          gte: startOfDay(this.startOfLastWeek),
+          lte: endOfDay(this.startOfLastWeek),
         },
       },
       include: {
@@ -105,7 +110,7 @@ export default class Scheduler {
     }
 
     const lowestScoreDiffs = await lowestMaterialScoreDiffs({
-      afterDate: this.startOfTheWeek,
+      afterDate: this.startOfLastWeek,
       username: this.username,
     });
     const lowestScores = await lowestMaterialScoreAvgs({
@@ -120,7 +125,7 @@ export default class Scheduler {
     const studyIntensity = await this.retrieveStudyIntensity();
 
     // calculate the time needed of each materials
-    const lowestScoreDiffWeights = await Promise.all(
+    const lowestScoreDiffTimeNeeded = await Promise.all(
       lowestScoreDiffs.map(async (d) => {
         const [
           [{ score_growth_over_time }],
@@ -149,7 +154,7 @@ export default class Scheduler {
 
         const timeNeeded = (peakScore - avg) / Math.abs(score_growth_n);
         // time needed is in milliseconds
-        const weight = timeNeeded / SCHEDULE_ITEM_MS;
+        // const weight = timeNeeded / SCHEDULE_ITEM_MS;
 
         console.log(`\n================ LOWEST DIFFS`);
         console.log(`calculating time required for mid$${d.material_id}`);
@@ -158,13 +163,13 @@ export default class Scheduler {
         console.log(`peak score: ${peakScore}`);
         console.log(`avg score: ${avg}`);
         console.log(`time needed: ${timeNeeded}`);
-        console.log(`weight: ${weight}`);
+        // console.log(`weight: ${weight}`);
 
-        return { materialId: d.material_id, weight };
+        return { materialId: d.material_id, timeNeeded };
       }),
     );
 
-    const lowestScoreWeights = await Promise.all(
+    const lowestScoreTimeNeeded = await Promise.all(
       lowestScores.map(async (d) => {
         const [{ score_growth_over_time }] =
           await materialGrowthOverTimeOnStudySession({
@@ -180,7 +185,7 @@ export default class Scheduler {
 
         const target = (FULL_SCORE - d.avg_score) * studyIntensity;
         const timeNeeded = target / Math.abs(score_growth_n);
-        const weight = timeNeeded / SCHEDULE_ITEM_MS;
+        // const weight = timeNeeded / SCHEDULE_ITEM_MS;
 
         console.log(`\n================ LOWEST SCORES`);
         console.log(`calculating time required for mid$${d.id}`);
@@ -189,112 +194,26 @@ export default class Scheduler {
         console.log(`avg score: ${d.avg_score}`);
         console.log(`target: ${target}`);
         console.log(`time needed: ${timeNeeded}`);
-        console.log(`weight: ${weight}`);
+        // console.log(`weight: ${weight}`);
 
-        return { materialId: d.id, weight };
+        return { materialId: d.id, timeNeeded };
       }),
     );
 
-    // combine the materials, and remove those that is below a certain treshold
     const materialCandidates = [
-      ...lowestScoreDiffWeights,
-      ...lowestScoreWeights,
-    ].filter(({ weight }) => weight > DISCARD_WEIGHT_TRESHOLD);
-
-    // sort them by ascending order
-    materialCandidates.sort((a, b) => b.weight - a.weight);
+      ...lowestScoreDiffTimeNeeded,
+      ...lowestScoreTimeNeeded,
+    ];
     console.log(materialCandidates);
 
-    // choose them
-    let chosenMaterials: { materialId: number; weight: number }[] = [];
-    let currentWeight = 0;
-
-    materialCandidates.forEach((candidate) => {
-      if (currentWeight >= SCHEDULE_COUNT) {
-        // we got the right spot!
-        return;
-      }
-
-      console.log(candidate.weight);
-      currentWeight += candidate.weight;
-      chosenMaterials.push({
-        materialId: candidate.materialId,
-        weight: candidate.weight,
-      });
+    materialCandidates.forEach((c) => {
+      console.log(`  -> ${c.materialId}: ${c.timeNeeded}`);
     });
 
-    console.log(chosenMaterials);
-
-    // done! normalize their weights to they would match the desired weight
-    chosenMaterials = chosenMaterials.map(({ materialId, weight }) => ({
-      materialId,
-      weight: (weight / currentWeight) * SCHEDULE_COUNT,
-    }));
-    console.log("bbb");
-
-    // todo: OOP the hell code below me
-    // we've got our materials to be scheduled!
-    // turn them into a real schedule
-    let scheduleResult: ScheduleWeek = [[], [], [], [], [], [], []];
-
-    let usedWeightInDay = 0;
-
-    let currentDay = 0;
-    let currentMaterialIdx = 0;
-
-    while (true) {
-      console.log("whiel");
-      console.log(scheduleResult);
-      console.log(`today is ${currentDay}`);
-      const currentMaterial = chosenMaterials[currentMaterialIdx];
-      const minimumMaterialTime = currentMaterial.weight * SCHEDULE_ITEM_MS;
-      console.log("aftere dez");
-
-      if (minimumMaterialTime > 1 - usedWeightInDay) {
-        scheduleResult[currentDay].push({
-          materialId: currentMaterial.materialId,
-          startRelativeTimestamp: SCHEDULE_STARTS_AT + usedWeightInDay,
-          endRelativeTimestamp:
-            SCHEDULE_STARTS_AT +
-            usedWeightInDay +
-            (1 - usedWeightInDay) * SCHEDULE_ITEM_MS,
-        });
-        const weightForTheNextDay = minimumMaterialTime - (1 - usedWeightInDay);
-
-        usedWeightInDay = 0;
-        currentDay++;
-
-        if (currentDay >= 7) {
-          // warning: material candidates summed up into a value more than 7
-          break;
-        }
-
-        // put the rest for the next day
-        scheduleResult[currentDay].push({
-          materialId: currentMaterial.materialId,
-          startRelativeTimestamp: SCHEDULE_STARTS_AT,
-          endRelativeTimestamp:
-            SCHEDULE_STARTS_AT + weightForTheNextDay * SCHEDULE_ITEM_MS,
-        });
-        usedWeightInDay = weightForTheNextDay;
-      } else {
-        // we're fine, add it
-        scheduleResult[currentDay].push({
-          materialId: currentMaterial.materialId,
-          startRelativeTimestamp: SCHEDULE_STARTS_AT + usedWeightInDay,
-          endRelativeTimestamp:
-            SCHEDULE_STARTS_AT + usedWeightInDay + minimumMaterialTime,
-        });
-      }
-
-      if (currentDay >= 7) {
-        break;
-      }
-
-      currentMaterialIdx++;
-    }
-
-    return scheduleResult;
+    const TWO_HOURS = 2 * 60 * 60;
+    return new ScheduleSpreader(materialCandidates).spread({
+      times: [TWO_HOURS, TWO_HOURS, TWO_HOURS, TWO_HOURS, TWO_HOURS, TWO_HOURS],
+    });
   }
 }
 
@@ -327,78 +246,7 @@ function scheduleFromDatabase(
   ];
 }
 
-const testData = (materialId: number): ScheduleWeek => [
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("18:00"),
-      endRelativeTimestamp: sec("20:00"),
-    },
-  ],
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("18:00"),
-      endRelativeTimestamp: sec("20:00"),
-    },
-  ],
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("18:00"),
-      endRelativeTimestamp: sec("20:00"),
-    },
-  ],
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("18:00"),
-      endRelativeTimestamp: sec("20:00"),
-    },
-  ],
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("18:00"),
-      endRelativeTimestamp: sec("20:00"),
-    },
-  ],
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("18:00"),
-      endRelativeTimestamp: sec("20:00"),
-    },
-  ],
-  [
-    {
-      materialId,
-      startRelativeTimestamp: sec("08:15"),
-      endRelativeTimestamp: sec("10:15"),
-    },
-    {
-      materialId,
-      startRelativeTimestamp: sec("16:00"),
-      endRelativeTimestamp: sec("18:00"),
-    },
-  ],
-];
-
-function fillShallowTimeBlock(
-  shallow: ShallowTimeBlock,
-  materialId: number,
-): ScheduleTimeBlock {
-  return {
-    ...shallow,
-    materialId,
-  };
-}
-
 type SevenTimes<T> = [T, T, T, T, T, T, T];
-
-type ShallowTimeBlock = Omit<ScheduleTimeBlock, "materialId">;
-type ShallowTimeBlockDay = ShallowTimeBlock[];
-type ShallowTimeBlockWeek = SevenTimes<ShallowTimeBlockDay>;
 
 export type ScheduleWeek = SevenTimes<ScheduleDay>;
 export type ScheduleDay = ScheduleTimeBlock[];
