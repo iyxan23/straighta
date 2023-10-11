@@ -185,3 +185,11 @@ them since there is no way to include negative weights into the schedule.
 When the algorithm encounters an average negative growth. It will be: `0.5 + score_growth * 1`.
 
 Make the growth to be positive and boost .5 to it. It makes a bit of sense.
+
+## Low weights
+
+Since materials might have a weight even as low as `0.00001`, it's not going to be useful in
+scheduling and it's better for it to be discarded and let other dominating subjects to fill up the
+schedule instead.
+
+The treshold is 0.5, any weight lower than it shall be discarded.

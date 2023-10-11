@@ -195,11 +195,11 @@ export default class Scheduler {
       }),
     );
 
-    // combine them
+    // combine the materials, and remove those that is below a certain treshold
     const materialCandidates = [
       ...lowestScoreDiffWeights,
       ...lowestScoreWeights,
-    ];
+    ].filter(({ weight }) => weight > DISCARD_WEIGHT_TRESHOLD);
 
     // sort them by ascending order
     materialCandidates.sort((a, b) => b.weight - a.weight);
