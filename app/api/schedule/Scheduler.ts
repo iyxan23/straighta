@@ -141,17 +141,24 @@ export default class Scheduler {
           }),
         ]);
 
-        console.log(`================`);
+        // turn score growth to be .5 + positive score_growth if its negative
+        const score_growth_n =
+          score_growth_over_time < 0
+            ? 0.5 + score_growth_over_time * 1
+            : score_growth_over_time;
+
+        const timeNeeded = (peakScore - avg) / Math.abs(score_growth_n);
+        // time needed is in milliseconds
+        const weight = timeNeeded / SCHEDULE_ITEM_MS;
+
+        console.log(`\n================ LOWEST DIFFS`);
         console.log(`calculating time required for mid$${d.material_id}`);
         console.log(d);
         console.log(`score growth over time: ${score_growth_over_time}`);
         console.log(`peak score: ${peakScore}`);
         console.log(`avg score: ${avg}`);
-        // todo: fix negative growth :(
-        const timeNeeded = (peakScore - avg) / score_growth_over_time;
-        // time needed is in milliseconds
         console.log(`time needed: ${timeNeeded}`);
-        const weight = timeNeeded / SCHEDULE_ITEM_MS;
+        console.log(`weight: ${weight}`);
 
         return { materialId: d.material_id, weight };
       }),
@@ -165,10 +172,24 @@ export default class Scheduler {
             username: this.username,
           });
 
+        // turn score growth to be .5 + positive score_growth if its negative
+        const score_growth_n =
+          score_growth_over_time < 0
+            ? 0.5 + score_growth_over_time * 1
+            : score_growth_over_time;
+
         const target = (FULL_SCORE - d.avg_score) * studyIntensity;
-        // todo: fix negative growth :(
-        const timeNeeded = target / score_growth_over_time;
+        const timeNeeded = target / Math.abs(score_growth_n);
         const weight = timeNeeded / SCHEDULE_ITEM_MS;
+
+        console.log(`\n================ LOWEST SCORES`);
+        console.log(`calculating time required for mid$${d.id}`);
+        console.log(d);
+        console.log(`score growth over time: ${score_growth_over_time}`);
+        console.log(`avg score: ${d.avg_score}`);
+        console.log(`target: ${target}`);
+        console.log(`time needed: ${timeNeeded}`);
+        console.log(`weight: ${weight}`);
 
         return { materialId: d.id, weight };
       }),

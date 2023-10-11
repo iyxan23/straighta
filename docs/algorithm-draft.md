@@ -175,3 +175,13 @@ schedule for them.
 I compiled this algorithm without prior research, nor do I have any experience with statistics,
 or even education. I am doing this of my own interest and I hope it provides a good framework for
 further development.
+
+## Negative score growth
+
+Well, there are times when the score you got after studying is actually lower than the test you took
+before you study. That's a bit unfortunate. And this algorithm will make an exception to process
+them since there is no way to include negative weights into the schedule.
+
+When the algorithm encounters an average negative growth. It will be: `0.5 + score_growth * 1`.
+
+Make the growth to be positive and boost .5 to it. It makes a bit of sense.
