@@ -32,8 +32,8 @@ export default async function SubjectDetailPage({
       <ul className="mt-8 grid md:grid-cols-2 xl:grid-cols-3 gap-4">
         {subject.materials.map((material) => (
           <li key={material.id} className="group">
-            <CustomCard className="p-4">
-              <hgroup className="inline-flex items-center justify-between w-full">
+            <CustomCard className="">
+              <hgroup className="inline-flex items-center justify-between w-full p-4 group-hover:border-b border-slate-200">
                 <h4 className="text-xl font-semibold text-slate-700">
                   {material.title}
                 </h4>
@@ -42,6 +42,9 @@ export default async function SubjectDetailPage({
                   <hr className="w-2 h-[2px] border-none bg-slate-700 -rotate-45 -ml-[1.5px] group-hover:rotate-45 transition"></hr>
                 </div>
               </hgroup>
+              <main className='group-hover:block hidden p-4'>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum unde eveniet qui, atque minima tempore id nemo repellat vitae molestiae sint, eum et recusandae laboriosam quo doloremque, illum in optio iure? Et?
+              </main>
             </CustomCard>
           </li>
         ))}
