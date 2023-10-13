@@ -1,4 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Straight A
+
+A failed project that did not make it to the finalists in the Technology Euphoria 2023 Competition. [Here's the proposal if you're interested](https://home.mycloud.com/action/share/9eea3e9e-ef15-4ad5-a9b1-bcd6c5c8b8df).
+
+## Quick Look
+
+Straight A is an innovative web app that brings study planning to the next level. It is designed to assign
+and arrange study sessions based off of evaluation of previous study sessions. It tries to evaluate and
+understand the learning patterns of the user to generate the best possible schedule for the maximum outcome.
+
+It is an assistive web app to coach students to learn independently.
+
+## Status
+
+Proposal mostly covers the references needed to create an MVP, but it has been poorly written and done in a
+hurry (we're supposed to participate in the competition 2 months prior to work on the project, but we registered
+2 weeks before the deadline lol, I guess that explains how this project didn't get through).
+
+The proposal contains references and a basic algorithm to schedule and arrange study sessions for the user based
+on previous study sessions. I believe It's pretty good considering it's written in just two weeks.
+
+The current implementation uses Next.js 13 with the app directory, featuring prisma as the ORM, though
+operations like complex aggregation and such are implemented with custom SQL queries, and a full redux
+frontend powered with RTK Query.
+
+It currently implements basic functionalities of the actual web app itself like creating materials and
+doing study sessions. The actual algorithm for determining the schedule is **almost finished**, but
+not working yet.
 
 ## Getting Started
 
