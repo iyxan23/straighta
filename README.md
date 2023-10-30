@@ -1,8 +1,8 @@
 # Straight A
 
-|    ![dashboard](.github/dashboard.png)     | ![study dialog](.github/studydialog.png) |
-| :----------------------------------------: | :--------------------------------------: |
-| ![material list](.github/materiallist.png) |  ![study mode](.github/study-mode.png)   |
+|    ![dashboard](.github/dashboard.png)     | ![study dialog](.github/study-dialog.png) |
+| :----------------------------------------: | :---------------------------------------: |
+| ![material list](.github/materiallist.png) |  ![study mode](.github/study-mode.png)    |
 
 A failed project that did not make it to the finalists in the Technology Euphoria 2023 Competition. [Here's the proposal if you're interested](https://home.mycloud.com/action/share/9eea3e9e-ef15-4ad5-a9b1-bcd6c5c8b8df).
 
