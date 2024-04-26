@@ -54,14 +54,11 @@ I got into this rollercoaster ride to Malaysia!
 
 At the end, we actually got into the semifinals, which kinda shocked me a bit! But then we don't
 have any website to submit, and I'm busy at Malaysia. We are acutally composed of a team of 3, me
-being the leader. I learnt a lesson from this competition: **Don't trust the members of your team
-to take care of the project**. Because nobody in my team cared about it! Literally! One of my
-member chatted **a day before the deadline**, asking "how's the progress". Like, did you think
-I'd do something? Pheww, that definitely was a great experience. Though, I guess the bad apple
-is on me, I haven't taken the time to communicate or orchestrate the work on the website to the
-members of my team.
+being the leader. Because I wasn't present with my team at the time, we couldn't coordinate
+properly, and the rewrite ended up being dismissed, effectively forcing us to submit the nextjs
+version to IDN ITFEST.
 
-I probably could've pushed it futher when I was in Malaysia, but I just can't. So, that's why.
+Nonetheless though, the lessons I've learned from this project is a lot!
 
 ## Getting Started
 
